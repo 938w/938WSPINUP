@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+938W_CT_spinup/build/938WCTspinup.bin
+938W_CT_spinup/build/938WCTspinup.elf
+938W_CT_spinup/build/938WCTspinup.map
+938W_CT_spinup/compile_commands.json
+938W_CT_spinup/makefile
+938W_CT_spinup/vex/mkenv.mk
+938W_CT_spinup/vex/mkrules.mk
