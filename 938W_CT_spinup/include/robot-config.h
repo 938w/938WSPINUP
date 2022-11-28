@@ -13,6 +13,8 @@ extern controller Controller1;
 extern controller Controller2;
 extern motor_group INtake;
 extern digital_out Piston;
+extern smartdrive maindrive;
+extern inertial Inertial;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

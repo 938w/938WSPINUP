@@ -8,10 +8,14 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-motor FrontLeft = motor(PORT1, ratio18_1, false);
-motor LeftBack = motor(PORT2, ratio18_1, false);
+motor FrontLeft = motor(PORT1, ratio18_1, true);
+motor LeftBack = motor(PORT2, ratio18_1, true);
 motor RightFront = motor(PORT3, ratio18_1, false);
 motor RightBack = motor(PORT20, ratio18_1, false);
+motor_group left1 = motor_group(FrontLeft, LeftBack);
+motor_group right1 = motor_group(RightFront, RightBack);
+inertial Inertial = inertial(PORT11);
+smartdrive maindrive = smartdrive(left1, right1, Inertial, 320, 320, 130, distanceUnits::mm, 1.4);
 motor Flywheel1 = motor(PORT7, ratio18_1, false);
 motor FlywheelReversed = motor(PORT6, ratio18_1, true);
 controller Controller1 = controller(primary);
@@ -31,5 +35,18 @@ bool RemoteControlCodeEnabled = true;
  * This should be called at the start of your int main function.
  */
 void vexcodeInit( void ) {
-  // nothing to initialize
+  Brain.Screen.print("Device initialization...");
+  Brain.Screen.setCursor(2, 1);
+  // calibrate the drivetrain Inertial
+  wait(200, msec);
+  Inertial.calibrate();
+  Brain.Screen.print("Calibrating Inertial for Drivetrain");
+  // wait for the Inertial calibration process to finish
+  while (Inertial.isCalibrating()) {
+    wait(25, msec);
+  }
+  // reset the screen now that the calibration is complete
+  Brain.Screen.clearScreen();
+  Brain.Screen.setCursor(1,1);
+  Brain.Screen.clearScreen();
 }

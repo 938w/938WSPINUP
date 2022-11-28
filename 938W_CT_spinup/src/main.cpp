@@ -58,13 +58,6 @@ void pre_auton(void) {
 /*                                                                           */
 /*  You must modify the code to add your own robot specific commands here.   */
 /*---------------------------------------------------------------------------*/
-
-void autonomous(void) {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
-}
-
 void flywheelpid (int setspeed, double P) {
   double totalerror = 0;
   double currentspeed = (Flywheel1.velocity(percent) + FlywheelReversed.velocity(percent))/2;
@@ -73,9 +66,98 @@ void flywheelpid (int setspeed, double P) {
   totalerror += error;
   Flywheel1.spin(forward, setspeed/7 + addamps, vex::voltageUnits::volt);
   FlywheelReversed.spin(forward, setspeed/7 + addamps, vex::voltageUnits::volt);
-  wait(5, msec);
-
 }
+bool Exit = false;
+int flywheelloop () {
+  while (1) {
+  double totalerror = 0;
+  double currentspeed = (Flywheel1.velocity(percent) + FlywheelReversed.velocity(percent))/2;
+  double error = currentspeed-75;
+  double addamps = error * 0.7 * (totalerror * 1.1);
+  totalerror += error;
+  Flywheel1.spin(forward, 75/7 + addamps, vex::voltageUnits::volt);
+  FlywheelReversed.spin(forward, 75/7 + addamps, vex::voltageUnits::volt);
+  vex::this_thread::sleep_for(10);
+  if (Exit) {
+    break;
+  }
+  }
+  return (0);
+}
+
+void autonomous(void) {
+  Piston.set(true);
+  maindrive.setStopping(hold);
+  maindrive.driveFor(forward, 2, inches, 150, rpm);
+  INtake.spinFor(reverse, 300, degrees, 200, rpm);
+  maindrive.driveFor(reverse, 6, inches, 150, rpm); 
+  maindrive.setStopping(brake);  
+  maindrive.turnFor(left, 130, degrees, 90, rpm);
+  vex::thread t(flywheelloop);
+  INtake.spin(forward, 200, rpm);
+  maindrive.driveFor(forward, 65, inches, 50, rpm);
+  maindrive.turnFor(left, 90, degrees, 70, rpm);
+  maindrive.driveFor(forward, 3, inches, 150, rpm);
+  INtake.stop();
+  Piston.set(false);
+  wait(100, msec);
+  Piston.set(true);
+  wait(900, msec);
+  Piston.set(false);
+  wait(100, msec);
+  Piston.set(true);
+  wait(900, msec);
+  Piston.set(false);
+  wait(100, msec);
+  Piston.set(true);
+  wait(900, msec);
+  Exit = true;
+
+
+
+
+   // .......................................................................
+  // Insert autonomous user code here.
+  // ..........................................................................
+}
+/*
+double olom (bool yes, bool sey, bool ye) {
+  static double rightturns = 0.0;
+  static double leftturns = 0.0;
+  static double midturns = 0.0;
+  static double thetaB = 0;
+  static double x = 0;
+  static double y = 0;
+  double runchenwu = 1.3;
+  //encoder turns
+  double dleft = Left.position(turns);
+  double dright = Right.position(turns);
+  double dmid = Middle.position(turns);
+  //get number of turns in the current cycle which is equal to the whatever
+  dleft -= leftturns;
+  dright -= rightturns;
+  dmid -= midturns;
+  //store current amount of turns
+  leftturns +=dleft;
+  rightturns +=dright;
+  // midturns += dmid
+  //useformula to calculate distance or whatever
+  double dl = dleft * M_PI * 3.25;
+  double dr = dright * M_PI * 3.25;
+  //double dm = dmid
+  //double athetaB = (dl - dr)/(2*runchenwu);
+  double athetaB = (dl - dr - dmid)/(3);
+  //calculate distance and whatever
+  double dist = (dr + dl)/2;
+  double dy = dist * cos(thetaB + athetaB/2);
+  double dx = dist * sin(thetaB + athetaB/2);
+  //update xy values or whatever
+  x += dx;
+  y += dy;
+  thetaB += athetaB;
+  if (thetaB > 2+M_PI) {thetaB -= (2+M_PI);}
+  if (thetaB < - (2*M_PI)) {thetaB += (2+M_PI);}
+}*/
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
 /*                              User Control Task                            */
@@ -92,29 +174,25 @@ bool last1 = false;
 bool last2 = false;
 int myThread() {
   while (true) {
-  if ((Controller1.ButtonL1.pressing()||Controller2.ButtonL1.pressing()) && !last) {
+  if ((Controller1.ButtonL1.pressing()||Controller2.ButtonL2.pressing()) && !last) {
       last = true;
       state = !state;
-    } else if (!Controller1.ButtonL1.pressing()||!Controller2.ButtonL1.pressing()) {
+    } else if (!Controller1.ButtonL1.pressing()||!Controller2.ButtonL2.pressing()) {
       last = false;
     }
     if (state) {
-      if (SPEED < 100) {
-      flywheelpid(SPEED, 0.7);
-      } else {
-        Flywheel1.spin(fwd, SPEED, pct);
-        FlywheelReversed.spin(fwd, SPEED, pct);
-      }
+        flywheelpid(SPEED, 0.7);
     } else {
       Flywheel1.stop();
       FlywheelReversed.stop();
     }
-     if (SPEED < 0) {SPEED = 0;}
-    if (SPEED > 110) {SPEED = 110;}
+    
     vex::this_thread::sleep_for(10);
   }
   return (0);
 }
+bool ringlast = false;
+bool ringstate = false;
 void usercontrol(void) {
     FrontLeft.setBrake(coast);
     LeftBack.setBrake(coast);
@@ -132,39 +210,39 @@ void usercontrol(void) {
     // Each time through the loop your program should update motor + servo
     // values based on feedback from the joysticks.
     
-    FrontLeft.spin(reverse, Controller1.Axis3.position(), percent);
+    FrontLeft.spin(fwd, Controller1.Axis3.position(), percent);
   RightFront.spin(fwd, Controller1.Axis2.position(), percent);
     RightBack.spin(fwd, Controller1.Axis2.position(), percent);
-      LeftBack.spin(reverse, Controller1.Axis3.position(), percent);
-      if (Controller1.ButtonL2.pressing()){
-        INtake.spin(fwd);
-      } 
-      if (Controller1.ButtonR2.pressing()){
-        INtake.spin(reverse);
-      }
-      if (!Controller1.ButtonL2.pressing() && !Controller1.ButtonR2.pressing()) {
-        INtake.stop();
-      }
+      LeftBack.spin(fwd, Controller1.Axis3.position(), percent);
+   if (Controller1.ButtonL2.pressing()) {
+     INtake.spin(forward);
+   }
+   if (Controller1.ButtonR2.pressing()) {
+     INtake.spin(reverse);
+   }
+   if(!Controller1.ButtonL2.pressing() && !Controller1.ButtonR2.pressing()) {INtake.stop();}
       if (Controller1.ButtonY.pressing()){
         Piston.set(false);
       } else {
         Piston.set(true);
       }
 
-    if (Controller1.ButtonUp.pressing() && !last) {
+    if ((Controller1.ButtonUp.pressing()||Controller2.ButtonRight.pressing()) && !last) {
       last2 = true;
       SPEED = SPEED + 5;
-    } else if (!Controller1.ButtonUp.pressing()) {
+    } else if (!Controller1.ButtonUp.pressing()||!Controller2.ButtonRight.pressing()) {
       last2 = false;
     }
-    if (Controller1.ButtonDown.pressing() && !last) {
+    if ((Controller1.ButtonDown.pressing()||Controller2.ButtonLeft.pressing()) && !last) {
       last1 = true;
       SPEED = SPEED - 5;
-    } else if (!Controller1.ButtonDown.pressing()) {
+    } else if (!Controller1.ButtonDown.pressing()||!Controller2.ButtonLeft.pressing()) {
       last1 = false;
     }
+    if (SPEED < 0) {SPEED = 0;}
+    if (SPEED > 110) {SPEED = 110;}
 
-   /* Controller1.Screen.clearScreen();    Controller1.Screen.newLine();
+  /* Controller1.Screen.clearScreen();    Controller1.Screen.newLine();
     Controller1.Screen.print(Flywheel1.current(currentUnits::amp)+(FlywheelReversed.current(amp)));
     Controller1.Screen.print("AS");
     Controller1.Screen.print(Flywheel1.velocity(rpm)/2);
