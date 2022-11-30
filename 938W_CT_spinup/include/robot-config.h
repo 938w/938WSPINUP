@@ -15,6 +15,7 @@ extern motor_group INtake;
 extern digital_out Piston;
 extern smartdrive maindrive;
 extern inertial Inertial;
+extern digital_out endgame;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.

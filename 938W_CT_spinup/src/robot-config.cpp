@@ -24,6 +24,7 @@ motor INtakeMotorA = motor(PORT16, ratio18_1, false);
 motor INtakeMotorB = motor(PORT17, ratio18_1, false);
 motor_group INtake = motor_group(INtakeMotorA, INtakeMotorB);
 digital_out Piston = digital_out(Brain.ThreeWirePort.A);
+digital_out endgame = digital_out(Brain.ThreeWirePort.D);
 
 // VEXcode generated functions
 // define variable for remote controller enable/disable

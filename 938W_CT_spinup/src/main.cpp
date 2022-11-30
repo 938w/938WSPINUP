@@ -226,6 +226,12 @@ void usercontrol(void) {
       } else {
         Piston.set(true);
       }
+      if(!Controller1.ButtonRight.pressing() && !Controller1.ButtonB.pressing()) {endgame.set(false);}
+      if (Controller1.ButtonRight.pressing() && Controller1.ButtonB.pressing() ){
+        endgame.set(true);
+      } else {
+        endgame.set(false);
+      }
 
     if ((Controller1.ButtonUp.pressing()||Controller2.ButtonRight.pressing()) && !last) {
       last2 = true;
@@ -242,11 +248,13 @@ void usercontrol(void) {
     if (SPEED < 0) {SPEED = 0;}
     if (SPEED > 110) {SPEED = 110;}
 
+
   Controller1.Screen.clearScreen();    Controller1.Screen.newLine();/*
     Controller1.Screen.print(Flywheel1.current(currentUnits::amp)+(FlywheelReversed.current(amp)));
     Controller1.Screen.print("AS");
     Controller1.Screen.print(Flywheel1.velocity(rpm)/2);*/
-    Controller1.Screen.print(SPEED);/*
+    Controller1.Screen.print(SPEED);
+    /*
     Controller1.Screen.print(Flywheel1.temperature());*/
         // ........................................................................
     // Insert user code here. This is where you use the joystick values to
