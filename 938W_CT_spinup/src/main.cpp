@@ -97,6 +97,7 @@ void autonomous(void) {
   INtake.spin(forward, 200, rpm);
   maindrive.driveFor(forward, 65, inches, 50, rpm);
   maindrive.turnFor(left, 90, degrees, 70, rpm);
+  maindrive.setStopping(coast);
   maindrive.driveFor(forward, 3, inches, 150, rpm);
   INtake.stop();
   Piston.set(false);
@@ -174,11 +175,10 @@ bool last1 = false;
 bool last2 = false;
 int myThread() {
   while (true) {
-  if ((Controller1.ButtonL1.pressing()||Controller2.ButtonL2.pressing()) && !last) {
-      last = true;
-      state = !state;
-    } else if (!Controller1.ButtonL1.pressing()||!Controller2.ButtonL2.pressing()) {
-      last = false;
+    if (Controller1.ButtonL1.pressing()) {
+      state = true;
+    } if (Controller1.ButtonR1.pressing()) {
+      state = false;
     }
     if (state) {
         flywheelpid(SPEED, 0.7);
@@ -242,19 +242,18 @@ void usercontrol(void) {
     if (SPEED < 0) {SPEED = 0;}
     if (SPEED > 110) {SPEED = 110;}
 
-  /* Controller1.Screen.clearScreen();    Controller1.Screen.newLine();
+  Controller1.Screen.clearScreen();    Controller1.Screen.newLine();/*
     Controller1.Screen.print(Flywheel1.current(currentUnits::amp)+(FlywheelReversed.current(amp)));
     Controller1.Screen.print("AS");
-    Controller1.Screen.print(Flywheel1.velocity(rpm)/2);
-    Controller1.Screen.print("SS");
-    Controller1.Screen.print(SPEED);
+    Controller1.Screen.print(Flywheel1.velocity(rpm)/2);*/
+    Controller1.Screen.print(SPEED);/*
     Controller1.Screen.print(Flywheel1.temperature());*/
         // ........................................................................
     // Insert user code here. This is where you use the joystick values to
     // update your motors, etc.
     // ........................................................................
 
-    wait(10, msec); // Sleep the task for a short amount of time to
+    wait(5, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
   }
 }
