@@ -37,3 +37,6 @@
 938W_CT_spinup/makefile
 938W_CT_spinup/vex/mkenv.mk
 938W_CT_spinup/vex/mkrules.mk
+938WSPINUPCATA/build/938WSPINUPCATA.bin
+938WSPINUPCATA/build/938WSPINUPCATA.elf
+938WSPINUPCATA/build/938WSPINUPCATA.map

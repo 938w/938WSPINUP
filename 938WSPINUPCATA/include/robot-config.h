@@ -11,7 +11,12 @@ extern motor RightM;
 extern motor LeftM;
 extern motor RightB;
 extern motor LeftB;
-
+extern motor LeftF;
+extern motor RightF;
+extern inertial Inertial; 
+extern smartdrive Drivetrain; 
+extern motor_group Leftside; 
+extern motor_group Rightside; 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 
