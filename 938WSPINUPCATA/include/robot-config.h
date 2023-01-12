@@ -3,6 +3,7 @@ using namespace vex;
 extern brain Brain;
 
 // VEXcode devices
+extern optical Optical1;
 extern motor Catapult;
 extern motor Intake;
 extern controller Controller1;
@@ -17,6 +18,9 @@ extern inertial Inertial;
 extern smartdrive Drivetrain; 
 extern motor_group Leftside; 
 extern motor_group Rightside; 
+extern digital_out boost;
+extern digital_out endgame;
+
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

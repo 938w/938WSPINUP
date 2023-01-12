@@ -2,7 +2,7 @@
 #include "pid.h"
 double wheelcircumfrence = 3.25 * M_PI;
   void pid::drivepid(double target, double p, double pp, double d,
-                double c, bool slow) {
+                double c, double maxvelocity) {
     double derror = 1;
     double aerror = 1;
     double lasterror = 0;
@@ -19,10 +19,9 @@ double wheelcircumfrence = 3.25 * M_PI;
       aerror = currentyaw - Inertial.yaw();
       double anglespeed = aerror * pp;
       printf("%f, %f\n", derror, cdistance);
-      if (slow) {
-        if (speed > 60) {
-          speed = 60;
-        }
+    
+      if (speed > maxvelocity) {
+          speed = maxvelocity;
       }
       Leftside.spin(forward, 0.5 + speed + anglespeed, pct);
       Rightside.spin(forward, 0.5 + speed - anglespeed, pct);
