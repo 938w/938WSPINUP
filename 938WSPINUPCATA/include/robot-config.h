@@ -20,7 +20,7 @@ extern motor_group Leftside;
 extern motor_group Rightside; 
 extern digital_out boost;
 extern digital_out endgame;
-
+extern limit LimitSwitchC;
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
  * 

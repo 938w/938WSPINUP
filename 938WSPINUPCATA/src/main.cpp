@@ -46,14 +46,14 @@ void pre_auton(void) {
 }
 int addspeed = 0;
 int spinroller () {
-  while (Optical1.hue() < 250) {
+  while (!(Optical1.color() == red)) {
     Intake.spin(reverse);
     vex::this_thread::sleep_for(1);
     if (Controller1.ButtonX.pressing()){
       break;
     }
   }
-  while (Optical1.hue() < 250) {
+  while (!(Optical1.color() == red) ){
     Intake.spin(forward);
     vex::this_thread::sleep_for(1);
     if (Controller1.ButtonX.pressing()){
@@ -61,7 +61,7 @@ int spinroller () {
     }
   }
   Intake.spin(forward);
-  vex::this_thread::sleep_for(50);
+  vex::this_thread::sleep_for(40);
   Intake.stop(hold);
   return 0;
 }
@@ -69,13 +69,9 @@ bool iscatagoingdown = false;
 void setCata() {
   iscatagoingdown = true;
   Rotation3.resetPosition();
-  while (Rotation3.position(degrees) < 62) {
+  while(!LimitSwitchC.pressing()) {
+    Catapult.spin(forward, 100, rpm);
     vex::this_thread::sleep_for(1);
-    Catapult.spin(forward);
-  }
-// no shot is that pid control
-  while (Rotation3.position(degrees) < 70.8) {
-    Catapult.spin(forward, 5 + (71 - Rotation3.position(degrees)) * 0.8, pct);
   }
   Catapult.stop();
   iscatagoingdown = false;
@@ -86,73 +82,87 @@ void launchCata() {
   Catapult.spinFor(forward, 80, degrees);
   wait(0.1, sec);
   setCata();
-  Catapult.spinFor(2, degrees);
 }
 
 // at+uton staorwjeiorjoiitinnsi here
 void autonomous(void) {
   boost.set(true);
+  endgame.set(false);
   // we do stuff here
   Drivetrain.setStopping(hold);
   pid drive;
   // when the actual code starts
-  Drivetrain.driveFor(forward, 1, inches, 600, rpm);
+  Drivetrain.driveFor(forward, 1, inches, 500, rpm);
   spinroller();
-  drive.drivepid(-5, 7, 1, 0, 0);
+  drive.drivepid(-5, 7, 1, 0.1, 0);
   //turn towards first disk
-  drive.driveturn(135, 0.7, 0.6);
+  drive.driveturn(135, 0.62, 0.26);
   Intake.spin(forward, 600, rpm);
-  drive.drivepid(23, 4.5, 1, 0.2, Inertial.yaw(), 60);
+  drive.drivepid(23, 4.5, 1, 0.2, Inertial.yaw(), 40);
   //autofix intake
-  vex::thread t(intakeoutake);
-  drive.driveturn(90, 0.76, 0.2);
+  drive.driveturn(89, 0.62, 0.26);
+  wait(0.1, sec);
   //drive into first roller
   drive.drivepid(6.5, 7, 1, 0);
   spinroller();
   drive.drivepid(-7, 7.1, 1, 0.1, Inertial.yaw(), 60);
   //turn towards high goal
-  drive.driveturn(0, 0.8, 0.5);
+  drive.driveturn(0, 0.62, 0.26);
   //stop thread
-  vex::thread interrupt(t);
+
   Intake.stop();
   //wait for accuracy
   wait(200, msec);
   //drive to high goal and shoot disks
-  drive.drivepid(-54, 6, 1.2, 0.1, 0, 90);
+  vex::thread a(intakeoutake);
+  drive.drivepid(-57, 4, 0.35, 1.2, 0, 80);
   drive.driveturn(6, 0.8, 0.1);
+  Intake.stop();
   vex::thread r(launchCata);
-  wait(0.9, sec);
+  wait(0.8, sec);
   //turn and drive to next set
-  drive.driveturn(-2, 1, 0.1);
-  drive.drivepid(44, 6.5, 1, 0.1, -2, 60);
+  drive.driveturn(-2, 0.6, 0.3);
+  drive.drivepid(45, 3.9, 0.35, 1.2, -2, 70);
   //intake diagonal row of discs
   Intake.spin(forward, 100, pct);
-  drive.driveturn(-135, 0.8, 0.4);
-  drive.drivepid(70, 7, 0.8, 0.5, -135, 60);
-  Intake.spin(reverse);
+  drive.driveturn(-135, 0.62, 0.5);
+  wait(0.1,sec);
+  drive.drivepid(71, 3.9, 1, 1.2, -135, 60);
   //turn and drive towards goal
-  drive.driveturn(0, 0.8, 0.2);
-  drive.drivepid(-40, 6, 0.8, 0.5, 0, 80);
-  drive.driveturn(-90, 0.8, 0.5);
-  drive.drivepid(-14.5, 7, 0.8, 0.5, -90);
+  drive.driveturn(0, 0.62, 0.5);
+  wait(0.1,sec);
+  drive.drivepid(-38, 5.5, 0.6, 0.5, 0, 60);
+  drive.driveturn(-90, 0.62, 0.26);
+  drive.drivepid(-10, 4, 0.4, 1.2, -90);
   Intake.stop();
   //shoot second set of disks
   drive.driveturn(-95, 0.8, 0.5);
   vex::thread c(launchCata);
   wait(0.8, sec);
-  drive.drivepid(14, 7, 0.8, 0.5, -90);
-  drive.driveturn(-43, 0.8, 0.2);
+  drive.drivepid(5, 4, 0.8, 1.2, -90);
+  drive.driveturn(-45, 0.62, 0.49);
   //intake next set
-  Intake.spin(forward);
-  drive.drivepid(40, 7, 0.8, 0.1, -43, 30);
-  drive.drivepid(-40, 7, 0.8, 0.1, -43);
-  drive.driveturn(-90, 0.8, 0.5);
-  drive.drivepid(-15, 7, 0.8, 0.5, -90);
+  Intake.spin(forward, 500, rpm);
+  drive.drivepid(37, 7, 0.8, 0.1, -45, 20);
+  drive.drivepid(-37, 4, 0.8, 1.2, -45);
+  vex::thread t(intakeoutake);
+  drive.driveturn(-90, 0.62, 0.5);
+  drive.drivepid(-2, 7, 0.6, 0.5, -90);
+  Intake.stop();
   vex::thread l(launchCata);
   wait(0.8, sec);
-  drive.drivepid(70, 7, 0.8, 0.1);
-  drive.driveturn(45, 0.8, 0.5);
-
+  drive.drivepid(57, 4, 0.6, 1.2, -90, 70);
+  drive.driveturn(180, 0.62, 0.26);
+  drive.drivepid(6, 7, 0.4, 0.1, 180);
+  spinroller();
+  drive.drivepid(-5, 7, 0.4, 0.1, 180);
+  drive.driveturn(-45, 0.62, 0.26);
+  Intake.spin(forward, 600, rpm);
+  drive.drivepid(23, 4.5, 1, 0.2, Inertial.yaw(), 40);
+  drive.driveturn(-90, 0.62, 0.26);
+  drive.drivepid(6.5, 7, 1, -90);
+  spinroller();
+  drive.drivepid(-7, 7.1, 1, 0.1, Inertial.yaw(), 60);
 }
 
 // Driver Control ZONE!!!!!!!!!!!

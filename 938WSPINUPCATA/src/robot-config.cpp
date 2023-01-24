@@ -25,6 +25,7 @@ inertial Inertial = inertial (PORT21);
 smartdrive Drivetrain = smartdrive(Leftside, Rightside, Inertial, 300, 320, 130, distanceUnits::mm, 0.6);
 digital_out boost = digital_out(Brain.ThreeWirePort.A);
 digital_out endgame = digital_out(Brain.ThreeWirePort.B);
+limit LimitSwitchC = limit(Brain.ThreeWirePort.C);
 // VEXcode generated functions
 // define variable for remote controller enable/disable
 bool RemoteControlCodeEnabled = true;
