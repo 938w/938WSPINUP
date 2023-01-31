@@ -2,13 +2,20 @@
 #include "ogeometry.h"
 
 static double wheelcircumfrence = 3.25 * M_PI;
+
 position odomoutputs () {
-  double theta = 0;
+  static double tdistr = 0;
+  static double tdistl = 0;
+  static double theta = 0;
   static double x = 0;
   static double y = 0;
   double dleft = Leftside.position(deg) * wheelcircumfrence * 0.6 / 360;
   double dright = Rightside.position(deg) * wheelcircumfrence * 0.6 / 360;
-  double dist = (dright + dleft) / 2;
+  dleft -= tdistl;
+  dright -= tdistr;
+  tdistl += dleft;
+  tdistr += dright;
+  double dist = (dright+dleft)/2;
   theta = Inertial.yaw() * (M_PI/180);
   //
   double addY = dist * cos(theta);

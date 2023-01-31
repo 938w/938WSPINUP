@@ -21,7 +21,7 @@
 // LeftF                motor         9
 // RightF               motor         10
 // ---- END VEXCODE CONFIGURED DEVICES ----
-
+#include "ogeometry.h"
 #include "vex.h"
 #include "pid.h"
 using namespace vex;
@@ -46,23 +46,29 @@ void pre_auton(void) {
 }
 int addspeed = 0;
 int spinroller () {
+  timer t1;
   while (!(Optical1.color() == red)) {
-    Intake.spin(reverse);
+    Intake.spin(reverse, 500, rpm);
     vex::this_thread::sleep_for(1);
     if (Controller1.ButtonX.pressing()){
+      break;
+    }
+    if(t1.time(sec) > 3) {
       break;
     }
   }
   while (!(Optical1.color() == red) ){
-    Intake.spin(forward);
+    Intake.spin(forward, 500, rpm);
     vex::this_thread::sleep_for(1);
     if (Controller1.ButtonX.pressing()){
       break;
     }
+    if(t1.time(sec) > 3) {
+      break;
+    }
   }
-  Intake.spin(forward);
-  vex::this_thread::sleep_for(40);
   Intake.stop(hold);
+  t1.clear();
   return 0;
 }
 bool iscatagoingdown = false;
@@ -70,7 +76,7 @@ void setCata() {
   iscatagoingdown = true;
   Rotation3.resetPosition();
   while(!LimitSwitchC.pressing()) {
-    Catapult.spin(forward, 100, rpm);
+    Catapult.spin(forward, 90, rpm);
     vex::this_thread::sleep_for(1);
   }
   Catapult.stop();
@@ -84,17 +90,45 @@ void launchCata() {
   setCata();
 }
 
+
 // at+uton staorwjeiorjoiitinnsi here
 void autonomous(void) {
-  boost.set(true);
+  vex::thread o(odomthread);
+  Rightside.resetPosition();
+  Leftside.resetPosition();
+  boost.set(false);
   endgame.set(false);
   // we do stuff here
   Drivetrain.setStopping(hold);
-  pid drive;
+  pid drive;  
+  Drivetrain.driveFor(forward, 1, inches, 600, rpm);
+  Intake.spin(reverse);
+  wait(0.2, sec);
+  Intake.stop(hold);
+  Drivetrain.driveFor(reverse, 5, inches,  600, rpm);
+  drive.driveturn(-85, 0.7, 0.48);
+  pursuit(-34, -18, 69, 2.5, 15, 5, true);
+  pursuit(-44, -52, -44, 1.72, 10, 2.8, false);
+  wait(0.2, sec);
+  vex::thread w(launchCata);
+  wait(1, sec);
+  wait(0.1, sec);
+  drive.driveturn(-135, 0.7, 0.48);
+  Intake.spin(forward);
+  pursuit(-74, -78, -64, 1.72, 20, 3.6, false);
+  Intake.stop();
+  wait(0.2, sec);
+  vex::thread m(launchCata);
+  wait(0.5, sec);
+  drive.driveturn(-150, 0.62, 0.26);
+  drive.drivepid(38, 4, 0.35, 1.2, -135, 60);
+  drive.driveturn(-90, 0.62, 0.26);
+  /*
   // when the actual code starts
-  Drivetrain.driveFor(forward, 1, inches, 500, rpm);
+  Drivetrain.driveFor(forward, 1, inch70es, 500, rpm);
   spinroller();
   drive.drivepid(-5, 7, 1, 0.1, 0);
+  
   //turn towards first disk
   drive.driveturn(135, 0.62, 0.26);
   Intake.spin(forward, 600, rpm);
@@ -105,7 +139,7 @@ void autonomous(void) {
   //drive into first roller
   drive.drivepid(6.5, 7, 1, 0);
   spinroller();
-  drive.drivepid(-7, 7.1, 1, 0.1, Inertial.yaw(), 60);
+  drive.drivepid(-5.5, 7.1, 1, 0.1, Inertial.yaw(), 60);
   //turn towards high goal
   drive.driveturn(0, 0.62, 0.26);
   //stop thread
@@ -115,7 +149,7 @@ void autonomous(void) {
   wait(200, msec);
   //drive to high goal and shoot disks
   vex::thread a(intakeoutake);
-  drive.drivepid(-57, 4, 0.35, 1.2, 0, 80);
+  drive.drivepid(-57, 4, 1.2, 1.2, 0, 80);
   drive.driveturn(6, 0.8, 0.1);
   Intake.stop();
   vex::thread r(launchCata);
@@ -131,7 +165,7 @@ void autonomous(void) {
   //turn and drive towards goal
   drive.driveturn(0, 0.62, 0.5);
   wait(0.1,sec);
-  drive.drivepid(-38, 5.5, 0.6, 0.5, 0, 60);
+  drive.drivepid(-38, 4, 0.6, 1.2, 0, 60);
   drive.driveturn(-90, 0.62, 0.26);
   drive.drivepid(-10, 4, 0.4, 1.2, -90);
   Intake.stop();
@@ -144,25 +178,33 @@ void autonomous(void) {
   //intake next set
   Intake.spin(forward, 500, rpm);
   drive.drivepid(37, 7, 0.8, 0.1, -45, 20);
-  drive.drivepid(-37, 4, 0.8, 1.2, -45);
+  drive.drivepid(-36, 4, 0.8, 1.2, -45);
   vex::thread t(intakeoutake);
   drive.driveturn(-90, 0.62, 0.5);
   drive.drivepid(-2, 7, 0.6, 0.5, -90);
   Intake.stop();
   vex::thread l(launchCata);
   wait(0.8, sec);
-  drive.drivepid(57, 4, 0.6, 1.2, -90, 70);
-  drive.driveturn(180, 0.62, 0.26);
-  drive.drivepid(6, 7, 0.4, 0.1, 180);
+  drive.drivepid(60, 4, 0.6, 1.2, -90, 70);
+  drive.driveturn(-135, 0.62, 0.28);
+  drive.drivepid(-9, 7, 0.4, 0.1, -135);
+  drive.driveturn(180, 0.8, 0.26);
+  wait(0.1, sec);
+  Drivetrain.drive(forward);
+  wait(0.3, sec);
+  Drivetrain.stop(hold);
   spinroller();
   drive.drivepid(-5, 7, 0.4, 0.1, 180);
   drive.driveturn(-45, 0.62, 0.26);
   Intake.spin(forward, 600, rpm);
-  drive.drivepid(23, 4.5, 1, 0.2, Inertial.yaw(), 40);
+  drive.drivepid(21, 4.5, 1, 0.2, Inertial.yaw(), 40);
   drive.driveturn(-90, 0.62, 0.26);
   drive.drivepid(6.5, 7, 1, -90);
   spinroller();
-  drive.drivepid(-7, 7.1, 1, 0.1, Inertial.yaw(), 60);
+  drive.drivepid(-18, 7.1, 1, 0.1, Inertial.yaw(), 60);
+  drive.driveturn(-135, 0.62, 0.28);
+  drive.drivepid(9, 7, 0.4, 0.1, -135);
+ */
 }
 
 // Driver Control ZONE!!!!!!!!!!!
@@ -179,6 +221,7 @@ int cataThread() {
 }
 void usercontrol(void) {
   boost.set(true);
+  vex::thread o(odomthread);
   // User control code here, inside the loop
   Intake.setVelocity(100, percent);
   Catapult.setVelocity(100, percent);
@@ -188,7 +231,6 @@ void usercontrol(void) {
   Drivetrain.setStopping(coast);
   while (1) {
     // Rotation Sensor Display(should be zero when the cata is up)
-    printf("%f\n", Rotation3.position(degrees));
     if (!iscatagoingdown) {
       if (Controller1.ButtonR2.pressing()) {
         Intake.spin(reverse, 400, rpm);
@@ -214,6 +256,10 @@ void usercontrol(void) {
     RightF.spin(forward, Controller1.Axis2.position(), percent);
     LeftF.spin(forward, Controller1.Axis3.position(), percent);
     vex::thread t(cataThread);
+    /*
+    position odom = odomoutputs();
+    Controller1.Screen.newLine();
+    Controller1.Screen.print("%f, %f", odom.x, odom.y);*/
     wait(5, msec);
   }
 }

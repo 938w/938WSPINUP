@@ -4,19 +4,20 @@
 static double wheelcircumfrence = 3.25 * M_PI;
 void pid::drivepid(double target, double p, double pp, double d, double c,
                    double maxvelocity) {
+  Leftside.resetPosition();
+  Rightside.resetPosition();
   double derror = 1;
   double aerror = 1;
   double lasterror = 0;
   double base = 0;
-  Leftside.resetPosition();
-  Rightside.resetPosition();
   double currentyaw = c;
-
+  double lastV = 0;
   while (fabs(derror) > 0.1 || fabs(aerror) > 0.5) {
     double nowyaw = Inertial.yaw();
-    double cdistance =
-        ((Leftside.position(deg) + Rightside.position(deg)) / 2) *
-        wheelcircumfrence * 0.6 / 360;
+    double cdistance = ((Leftside.position(deg) +
+                         Rightside.position(deg) /
+                        2) *
+                       wheelcircumfrence * 0.6 / 360);
     derror = target - cdistance;
     double derivative = derror - lasterror;
     double speed = derror * p + derivative * d;
@@ -37,10 +38,12 @@ void pid::drivepid(double target, double p, double pp, double d, double c,
         nowyaw = 180 + (180 + Inertial.yaw());
       }
     }
+   
     aerror = currentyaw - nowyaw;
     Leftside.spin(forward, base + speed + anglespeed, pct);
     Rightside.spin(forward, base + speed - anglespeed, pct);
     lasterror = derror;
+    lastV = Drivetrain.velocity(pct);
   }
   Drivetrain.stop(hold);
 }
@@ -48,9 +51,6 @@ void pid::driveturn(double target, double p, double d) {
   double error = 1;
   double lasterror = 0;
   double totalerror = 0;
-  Leftside.resetPosition();
-  Rightside.resetPosition();
-  Inertial.resetRotation();
   double base = 0;
 
   double currentyaw;
@@ -85,16 +85,58 @@ int intakeoutake() {
   vex::this_thread::sleep_for(5);
   return 0;
 }
-void pursuit(double targetX, double targetY, double targetA) {
-  double base = 0;
+
+position odom;
+int odomthread() {
+  while (true) {
+    printf("%f, %f\n", odom.x, odom.y);
+    odom = odomoutputs();
+    vex::this_thread::sleep_for(5);
+    
+  }
+  return 0;
+}
+void pursuit(double targetX, double targetY, double targetA, double P, double max, double maxd,
+             bool constant) {
+  pid ang;
+  int stop = 0;
   double xError = 100;
   double yError = 100;
-  while (xError > 1 || yError > 1) {
-    position odom = odomoutputs();
+  double dError = 100;
+  double turnVelocity = 1;
+  double fwVelocity = 0;
+  double previous = 0;
+  double c = Inertial.yaw();
+  while (abs(xError) > 0.2 || abs(yError) > 0.2 || turnVelocity > 0.1) {
     xError = targetX - odom.x;
     yError = targetY - odom.y;
-    Rightside.spin(forward, base, pct);
-    Leftside.spin(forward, base, pct);
-    this_thread::sleep_for(10);
+    dError = sqrt((pow(xError, 2) + pow(yError, 2)));
+    double tAngle = atan2(xError, yError) * (180 / M_PI);
+    c = Inertial.yaw();
+    turnVelocity = ((tAngle - c) * 0.7);
+
+    fwVelocity = dError * P;
+    // printf("%f\n", tAngle);
+    double change = fwVelocity - previous;
+    if (change > max) {
+      fwVelocity -= change - max;
+    }
+    if (change < -maxd) {
+      fwVelocity -= change + maxd;
+    }
+    if (constant) {
+      fwVelocity = 60;
+    } 
+    printf("%f, %f\n", tAngle, dError);
+    Rightside.spin(forward, fwVelocity - turnVelocity, pct);
+    Leftside.spin(forward, fwVelocity + turnVelocity, pct);
+    this_thread::sleep_for(2);
+    previous = Drivetrain.velocity(pct);
+    
   }
+  if (!(targetA == 69)) {
+    ang.driveturn(targetA, 0.57, 0.26);
+  }
+  Drivetrain.stop(hold);
+  printf("%f, %f\n", odom.x, odom.y);
 }

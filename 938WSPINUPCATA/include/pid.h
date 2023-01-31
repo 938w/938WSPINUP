@@ -5,3 +5,5 @@ class pid {
   void drivepid(double target, double p, double pp, double d = 0.05, double c = Inertial.yaw(), double maxvelocity = 100);
 };
 int intakeoutake ();
+int odomthread ();
+void pursuit(double targetX, double targetY, double targetA, double P, double max, double maxd, bool constant);
