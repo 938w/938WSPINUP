@@ -1,4 +1,5 @@
 #include "vex.h"
+void pursuit(double targetX, double targetY, double targetA, double P, double max, double maxd, bool constant, bool backwards = false);
 class pid {
   public: 
   void driveturn(double target, double p, double d);
@@ -6,4 +7,3 @@ class pid {
 };
 int intakeoutake ();
 int odomthread ();
-void pursuit(double targetX, double targetY, double targetA, double P, double max, double maxd, bool constant);
