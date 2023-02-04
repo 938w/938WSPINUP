@@ -1,7 +1,6 @@
 #include "pid.h"
-#include "ogeometry.h"
 #include "vex.h"
-
+#include "ogeometry.h"
 // ----- Odometry Thread and Pursuit -----
 //  There is the defnition of the odom thread
 //  There is the definition of the pursuit
@@ -12,63 +11,54 @@ int odomthread() {
     // printf("%f, %f\n", odom.x, odom.y);
     odom = odomoutputs();
     vex::this_thread::sleep_for(5);
+    
   }
   return 0;
 }
 
 void pursuit(double targetX, double targetY, double targetA, double P,
-             double max, double maxd, bool constant, bool backwards) {
+             double max, double maxd, bool constant) {
   pid ang;
   // error values
   double xError = 100;
   double yError = 100;
   double dError = 100;
-double tAngle = 0;
+
   double turnVelocity = 1;
   double fwVelocity = 0;
   double previous = 0;
   double c = Inertial.yaw();
-  while (abs(xError) > 2.5 || abs(yError) > 2.5 || turnVelocity > 0.1) {
+  while (abs(xError) > 0.25 || abs(yError) > 0.25 || turnVelocity > 0.1) {
     xError = targetX - odom.x;
     yError = targetY - odom.y;
-    // distance formula
     dError = sqrt((pow(xError, 2) + pow(yError, 2)));
-    if (!backwards) {
-   tAngle = atan2(xError, yError) * (180 / M_PI);
-    } else {
-    tAngle = atan2(-xError, -yError) * (180 / M_PI);
-    }
-  
+    double tAngle = atan2(xError, yError) * (180 / M_PI);
+    c = Inertial.yaw();
     turnVelocity = ((tAngle - c) * 0.7);
+    
     fwVelocity = dError * P;
     // printf("%f\n", tAngle);
-    // slew
     double change = fwVelocity - previous;
-
     if (change > max) {
       fwVelocity -= change - max;
     }
     if (change < -maxd) {
       fwVelocity -= change + maxd;
     }
-    if (backwards) {
-      fwVelocity = fwVelocity *-1;
-    }
-    // if you want constant speed
     if (constant) {
-      fwVelocity = 60;
+      fwVelocity = 55;
+    } 
+    if (fwVelocity > 100) {
+      fwVelocity = 100;
     }
+    printf("%f, %f\n", tAngle, dError);
     Rightside.spin(forward, fwVelocity - turnVelocity, pct);
     Leftside.spin(forward, fwVelocity + turnVelocity, pct);
     this_thread::sleep_for(2);
-    if (!backwards) {
     previous = Drivetrain.velocity(pct);
-    } else {
-    previous = -Drivetrain.velocity(pct);
-    }
   }
   if (!(targetA == 69)) {
-    ang.driveturn(targetA, 0.57, 0.26);
+    ang.driveturn(targetA, 0.58, 0.26);
   }
   Drivetrain.stop(hold);
   printf("%f, %f\n", odom.x, odom.y);
