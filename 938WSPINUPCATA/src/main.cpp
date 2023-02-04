@@ -97,11 +97,10 @@ void autonomous(void) {
     printf("[roller1] current time: %f seconds.\n", t_auton.time(sec));
     
     Drivetrain.driveFor(reverse, 5, inches, 400, rpm);
-    drive.driveturn(-85, 0.6, 0.3);
+    drive.driveturn(-85, 0.62, 0.3);
     
     pursuit(-29, -13, 69, 2, 15, 1, true);
-    pursuit(-44, -52, -44, 1.7, 10, 3.5, false);
-    wait(0.1, sec);
+    pursuit(-44, -52, -44, 1.7, 10, 3.6, false);
     vex::thread w(launchCata);
     wait(0.2, sec);
 
@@ -109,9 +108,10 @@ void autonomous(void) {
 
     drive.driveturn(-120, 0.7, 0.48);
     Intake.spin(forward);
-    pursuit(-74, -78, -65, 1.7, 20, 4.5, false);
+    pursuit(-74, -78, -66, 1.5, 40, 4, false);
+    Drivetrain.driveFor(reverse, 4, inches, 300, rpm);
     Intake.stop();
-    wait(0.1, sec);
+    wait(0.2, sec);
     vex::thread m(launchCata);
     wait(0.2, sec);
 
@@ -119,7 +119,7 @@ void autonomous(void) {
 
     drive.driveturn(-145, 0.63, 0.28);
     Intake.spin(forward);
-    pursuit(-95, -102, -90.5, 1.7, 20, 3.8, false);
+    pursuit(-95, -104, -90.5, 1.5, 10, 2, false);
     Intake.stop();
     Drivetrain.drive(forward);
     wait(0.3, sec);

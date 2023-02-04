@@ -5,7 +5,7 @@ color colour;
 int spinroller () {
   timer t1;
   while (!(Optical1.color() == colour)) {
-    Intake.spin(reverse, 300, rpm);
+    Intake.spin(reverse, 450, rpm);
     vex::this_thread::sleep_for(1);
     if (Controller1.ButtonX.pressing()){
       break;

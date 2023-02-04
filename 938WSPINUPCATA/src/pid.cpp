@@ -51,6 +51,9 @@ void pursuit(double targetX, double targetY, double targetA, double P,
     if (fwVelocity > 100) {
       fwVelocity = 100;
     }
+    if (fwVelocity < 5) {
+      fwVelocity = 5;
+    }
     printf("%f, %f\n", tAngle, dError);
     Rightside.spin(forward, fwVelocity - turnVelocity, pct);
     Leftside.spin(forward, fwVelocity + turnVelocity, pct);
@@ -115,7 +118,7 @@ void pid::driveturn(double target, double p, double d) {
   double base = 0;
 
   double currentyaw;
-  while (fabs(error) > 0.11) {
+  while (fabs(error) > 0.2) {
     currentyaw = Inertial.yaw();
     if (target == 180) {
       if (Inertial.yaw() < 0) {
