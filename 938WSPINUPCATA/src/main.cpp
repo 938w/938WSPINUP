@@ -45,6 +45,16 @@ void pre_auton(void) {
 // ----- Definition of Variables and Catapult Functions -----
 bool iscatagoingdown = false;
 int autonToRun = 0;
+int endgam () {
+    timer c;
+    while (true) {
+      vex::this_thread::sleep_for(500);
+      if (c.time(sec) > 40) {
+        endgame.set(true);
+      }
+    }
+    return 0;
+}
 void setCata() {
   iscatagoingdown = true;
   Rotation3.resetPosition();
@@ -68,7 +78,7 @@ void autonomous(void) {
   Leftside.resetPosition();
   
     vex::thread o(odomthread);
-  //boost.set(false);
+  boost.set(false);
   endgame.set(false);
   // we do stuff here
   Drivetrain.setStopping(hold);
@@ -89,10 +99,12 @@ void autonomous(void) {
     // -----  Left Side WP Code  -----
     // Spinning the roller to the right color
     //
+    
     Drivetrain.driveFor(forward, 1, inches, 600, rpm);
     Intake.spin(reverse);
     wait(0.2, sec);
     Intake.stop(hold);
+    spinroller();
 
     printf("[roller1] current time: %f seconds.\n", t_auton.time(sec));
     
@@ -103,33 +115,36 @@ void autonomous(void) {
     pursuit(-44, -52, -44, 1.7, 10, 3.6, false);
     vex::thread w(launchCata);
     wait(0.2, sec);
-
+    /*
     printf("[shot1] current time: %f seconds.\n", t_auton.time(sec));
 
-    drive.driveturn(-120, 0.7, 0.48);
+    drive.driveturn(-110, 0.7, 0.48);
     Intake.spin(forward);
-    pursuit(-74, -78, -66, 1.5, 40, 4, false);
-    Drivetrain.driveFor(reverse, 4, inches, 300, rpm);
+    pursuit(-74, -78, -66, 1.55, 60, 4, false);
+    Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
     Intake.stop();
-    wait(0.2, sec);
+    wait(0.15, sec);
     vex::thread m(launchCata);
     wait(0.2, sec);
 
     printf("[shot2] current time: %f seconds.\n", t_auton.time(sec));
 
+
+
     drive.driveturn(-145, 0.63, 0.28);
-    Intake.spin(forward);
-    pursuit(-95, -104, -90.5, 1.5, 10, 2, false);
+ 
+    pursuit(-95, -104, -90.5, 1.61, 10, 2.9, false);
     Intake.stop();
     Drivetrain.drive(forward);
-    wait(0.3, sec);
+    wait(0.2, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse);
     wait(0.25, sec);
     Intake.stop(hold);
     spinroller();
+    Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
     printf("[roller2] current time: %f seconds.\n", t_auton.time(sec));
-
+    */
     t_auton.clear();
   }
   if (autonToRun == 1 || autonToRun == 3) {
@@ -145,7 +160,8 @@ void autonomous(void) {
   }
   
   if (autonToRun == 4) {
-   // ----- Left Side Win Point -----
+    colour = vex::red;
+     // ----- Left Side Win Point -----
     //  We get two Rollers and shoot two sets of discs
     //  X axis <->
     //  Y axis up and down
@@ -154,55 +170,63 @@ void autonomous(void) {
     // -----  Left Side WP Code  -----
     // Spinning the roller to the right color
     //
+    thread e(endgam);
     Drivetrain.driveFor(forward, 1, inches, 600, rpm);
     Intake.spin(reverse);
-    wait(0.2, sec);
+    wait(0.3, sec);
     Intake.stop(hold);
 
     printf("[roller1] current time: %f seconds.\n", t_auton.time(sec));
-
-    Drivetrain.driveFor(reverse, 5, inches, 300, rpm);
-    drive.driveturn(-85, 0.7, 0.48);
-    pursuit(-29, -13, 69, 2.5, 15, 5, true);
-    pursuit(-44, -52, -44, 1.68, 10, 3.7, false);
-    wait(0.1, sec);
+    
+    Drivetrain.driveFor(reverse, 5, inches, 400, rpm);
+    drive.driveturn(-85, 0.62, 0.3);
+    
+    pursuit(-29, -13, 69, 2, 15, 1, true);
+    pursuit(-44, -52, -44, 1.7, 10, 3.6, false);
     vex::thread w(launchCata);
-    wait(0.2, sec);
+    wait(0.25, sec);
 
     printf("[shot1] current time: %f seconds.\n", t_auton.time(sec));
 
-    drive.driveturn(-135, 0.7, 0.48);
+    drive.driveturn(-110, 0.7, 0.48);
     Intake.spin(forward);
-    pursuit(-72, -80, -65, 1.68, 20, 4, false);
+    pursuit(-74, -78, -66, 1.55, 60, 4, false);
+    Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
     Intake.stop();
-    wait(0.1, sec);
+    wait(0.15, sec);
     vex::thread m(launchCata);
     wait(0.2, sec);
 
     printf("[shot2] current time: %f seconds.\n", t_auton.time(sec));
 
     drive.driveturn(-145, 0.63, 0.28);
-    pursuit(-100, -105, -90.5, 1.68, 20, 4.2, false);
-    Drivetrain.drive(forward);
-    wait(0.3, sec);
-    Drivetrain.stop(hold);
-    Intake.spin(reverse);
-    wait(0.25, sec);
-    Intake.stop(coast);
-    spinroller();
-    printf("[roller2] current time: %f seconds.\n", t_auton.time(sec));
+ 
+    pursuit(-95, -104, -90.5, 1.61, 10, 3, false);
+    Intake.stop();
     
-    drive.driveturn(125, 0.62, 0.26);
-    Intake.spin(forward);
-    pursuit(-80, -125, 180, 1.68, 15, 4, false);
-    t_auton.clear();
     Drivetrain.drive(forward);
     wait(0.3, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse);
-    wait(0.25, sec);
+    wait(0.3, sec);
     Intake.stop(hold);
     spinroller();
+    printf("[roller2] current time: %f seconds.\n", t_auton.time(sec));
+
+    t_auton.clear();
+    Intake.spin(forward);
+    Drivetrain.driveFor(reverse, 20, inches, 200, rpm);
+    /*
+    drive.driveturn(180, 0.8, 0.4);
+    Drivetrain.drive(forward, 400, rpm);
+    wait(0.8, sec);
+    Intake.stop(coast);
+    Drivetrain.stop(hold);
+    spinroller();
+  Drivetrain.driveFor(reverse, 30, inches, 200, rpm);*/
+    drive.driveturn(-135, 0.8, 0.4);
+    wait(0.5, sec);
+    endgame.set(true);
   }
 }
   

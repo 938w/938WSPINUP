@@ -51,8 +51,8 @@ void pursuit(double targetX, double targetY, double targetA, double P,
     if (fwVelocity > 100) {
       fwVelocity = 100;
     }
-    if (fwVelocity < 5) {
-      fwVelocity = 5;
+    if (fwVelocity < 2) {
+      fwVelocity = 2;
     }
     printf("%f, %f\n", tAngle, dError);
     Rightside.spin(forward, fwVelocity - turnVelocity, pct);
