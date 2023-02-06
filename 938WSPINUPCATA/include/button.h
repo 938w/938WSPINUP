@@ -1,6 +1,7 @@
 #include "vex.h"
 extern color colour;
 int spinroller ();
+/*
 class Button
 {
   public:
@@ -23,6 +24,6 @@ class Button
       Brain.Screen.yPosition() >= y && Brain.Screen.yPosition() <= y + width) return true;
       return false;
     }
-};
+};*/
 // https://www.vexforum.com/t/auton-selector/71511/5
 
