@@ -1,11 +1,12 @@
 #include "pid.h"
-#include "ogeometry.h"
 #include "vex.h"
 
 // ----- Odometry Thread and Pursuit -----
 //  There is the defnition of the odom thread
 //  There is the definition of the pursuit
 // ----- Odometry Thread and Pursuit Code;
+odome odometry;
+
 position odom;
 int odomthread() {
   Inertial.resetRotation();
@@ -71,11 +72,11 @@ void pursuit(double targetX, double targetY, double targetA, double P,
 // ----- PURSUIT V2 -----
 static double wheelcircumfrence = 3.25 * M_PI;
 void pursuit2(bool backwards, double targetX, double targetY, double endA,
-              double slewUP, double slewDOWN) {
-  static double p = 4;
+              double slewUP, double slewDOWN, bool stack) {
+  static double p = 3.7;
   static double ap = 0.62;
-  static double d = 1.2;
-  static double ad = 0.26;
+  static double d = 1;
+  static double ad = 0.62;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -83,6 +84,8 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double angleError = 100;
     double lasterror = 0;
     double previous = 0;
+    double previoust = 0;
+    double base = 0;
     while (angleError > 0.2) {
       xError = targetX - odom.x;
       yError = targetY - odom.y;
@@ -101,14 +104,33 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (change > 20) {
         turnVelocity -= change - 20;
       }
-      if (change < -2) {
-        turnVelocity -= change + 2;
+      if (change < -1) {
+        turnVelocity -= change + 1;
       }
-      Rightside.spin(forward, turnVelocity, pct);
-      Leftside.spin(forward, -turnVelocity, pct);
+      if (turnVelocity > 50) {
+        turnVelocity = 50;
+      }
+      if (turnVelocity < -50) {
+        turnVelocity = -50;
+      }
+      if (currentAngle > tAngle) {
+        base = -1;
+      }
+      if (currentAngle < tAngle) {
+        base = 1;
+      }
+      printf("%f\n", turnVelocity);
+      Rightside.spin(reverse, base + turnVelocity, pct);
+      Leftside.spin(forward, base + turnVelocity, pct);
       lasterror = angleError;
-      previous = Drivetrain.velocity(pct);
+      previous = turnVelocity;
+      previoust = tAngle;
       wait(1, msec);
+    }
+    if (stack) {Drivetrain.drive(forward, 100, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(hold);
+    wait(0.1, sec);
     }
     Drivetrain.stop(hold);
     angleError = 100;
@@ -121,6 +143,8 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double crdist = 0;
     double cldist = 0;
     while (distanceError > 0.2) {
+      xError = targetX - odom.x;
+      yError = targetY - odom.y;
       tAngle = atan2(xError, yError) * (180 / M_PI);
       double currentAngle = Inertial.rotation();
       if (currentAngle > 360) {
@@ -130,7 +154,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         currentAngle = currentAngle + 360;
       }
       angleError = tAngle - currentAngle;
-      double turnVelocity = angleError * 0.7;
+      double turnVelocity = angleError * 0.3;
       crdist = Rightside.position(deg) - trdist;
       cldist = Leftside.position(deg) - tldist;
       distanceError =
@@ -139,18 +163,26 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       double forwardVelocity = distanceError * p + derivative * d;
       double change = forwardVelocity - previous;
       if (change > slewUP) {
-        change -= change - 20;
+        forwardVelocity -= change - slewUP;
       }
       if (change < -slewDOWN) {
-        change -= change + slewDOWN;
+        forwardVelocity -= change + slewDOWN;
       }
-      Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
-      Rightside.spin(forward, forwardVelocity - turnVelocity, pct);
+      previous = forwardVelocity;
+      if (abs(distanceError) > 2) {
+        Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
+        Rightside.spin(forward, forwardVelocity - turnVelocity, pct);
+      } else {
+        Leftside.spin(forward, forwardVelocity, pct);
+        Rightside.spin(forward, forwardVelocity, pct);
+      }
       lasterror = distanceError;
+      previoust = tAngle;
       wait(1, msec);
       previous = Drivetrain.velocity(pct);
     }
   }
+
   if (backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -159,13 +191,10 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double lasterror = 0;
     double previous = 0;
     double previoust = 0;
-    while (angleError > 0.2) {
+    while (abs(angleError) > 0.2) {
       xError = targetX - odom.x;
       yError = targetY - odom.y;
       tAngle = atan2(-xError, -yError) * (180 / M_PI);
-      if (previoust < 0 && tAngle > 0) {
-        tAngle-
-      }
       double derivative = angleError - lasterror;
       double currentAngle = Inertial.rotation();
       if (currentAngle > 360) {
@@ -180,11 +209,17 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (change > 20) {
         turnVelocity -= change - 20;
       }
-      if (change < -2) {
-        turnVelocity -= change + 2;
+      if (change < -5) {
+        turnVelocity -= change + 5;
       }
-      Rightside.spin(forward, turnVelocity, pct);
-      Leftside.spin(forward, -turnVelocity, pct);
+      if (turnVelocity > 50) {
+        turnVelocity = 50;
+      }
+      if (turnVelocity < -50) {
+        turnVelocity = -50;
+      }
+      Rightside.spin(forward, -turnVelocity, pct);
+      Leftside.spin(forward, turnVelocity, pct);
       lasterror = angleError;
       previous = turnVelocity;
       previoust = tAngle;
@@ -200,7 +235,9 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double trdist = Rightside.position(deg);
     double crdist = 0;
     double cldist = 0;
-    while (distanceError > 0.2) {
+    while (abs(distanceError) > 0.2) {
+      xError = targetX - odom.x;
+      yError = targetY - odom.y;
       tAngle = atan2(-xError, -yError) * (180 / M_PI);
       double currentAngle = Inertial.rotation();
       if (currentAngle > 360) {
@@ -210,27 +247,38 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         currentAngle = currentAngle + 360;
       }
       angleError = tAngle - currentAngle;
-      double turnVelocity = angleError * 0.7;
+      double turnVelocity = angleError * 0.3;
       crdist = Rightside.position(deg) - trdist;
       cldist = Leftside.position(deg) - tldist;
       distanceError =
-          travel - (((crdist + cldist) / 2) * wheelcircumfrence * 0.6 / 360);
+          -travel - (((crdist + cldist) / 2) * wheelcircumfrence * 0.6 / 360);
       double derivative = distanceError - lasterror;
       double forwardVelocity = distanceError * p + derivative * d;
       double change = forwardVelocity - previous;
       if (change > slewUP) {
-        change -= change - 20;
+        forwardVelocity -= change - slewUP;
       }
       if (change < -slewDOWN) {
-        change -= change + slewDOWN;
+        forwardVelocity -= change + slewDOWN;
       }
-      Leftside.spin(reverse, forwardVelocity + turnVelocity, pct);
-      Rightside.spin(reverse, forwardVelocity - turnVelocity, pct);
+      turnVelocity = 0;
+      if (abs(distanceError) > 2) {
+        Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
+        Rightside.spin(forward, forwardVelocity - turnVelocity, pct);
+      } else {
+        Leftside.spin(forward, forwardVelocity, pct);
+        Rightside.spin(forward, forwardVelocity, pct);
+      }
       lasterror = distanceError;
-      
+      previoust = tAngle;
       wait(1, msec);
       previous = Drivetrain.velocity(pct);
     }
+  }
+  Drivetrain.stop(hold);
+  if (endA != 69) {
+    pid g;
+    g.driveturn(endA, 0.55, 0.26);
   }
 }
 
@@ -290,6 +338,7 @@ void pid::driveturn(double target, double p, double d) {
     if (target == 180) {
       if (Inertial.yaw() < 0) {
         currentyaw = 180 + (180 + Inertial.yaw());
+        p = 0.8;
       }
     }
     error = target - currentyaw;
@@ -297,10 +346,10 @@ void pid::driveturn(double target, double p, double d) {
     double speed = error * p + derivative * d;
     totalerror += error;
     // printf("%f\n", error);
-    if (Inertial.yaw() > target) {
+    if (currentyaw > target) {
       base = -1;
     }
-    if (Inertial.yaw() < target) {
+    if (currentyaw < target) {
       base = 1;
     }
     Leftside.spin(forward, base + speed, pct);

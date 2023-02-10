@@ -44,7 +44,7 @@ void pre_auton(void) {
 }
 // ----- Definition of Variables and Catapult Functions -----
 bool iscatagoingdown = false;
-int autonToRun = 0;
+int autonToRun = 4;
 int endgam() {
   timer c;
   while (true) {
@@ -171,12 +171,63 @@ void autonomous(void) {
     // decrease last val
     // -----  Left Side WP Code  -----
     // Spinning the roller to the right color
-    //
-    thread e(endgam);
+    //This is for endgame 
+    //thread e(endgam);
+    wait(0.1, sec);
+
+    odometry.setStarting(-25, 0);
     Drivetrain.drive(forward, 200, rpm);
     wait(0.2, sec);
     Drivetrain.stop(hold);
     spinroller();
+    Drivetrain.drive(reverse, 100, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(coast);
+    Intake.spin(forward);
+    pursuit2(false, -8, -14, 90, 8, 7);
+    Intake.stop(coast);
+    Drivetrain.drive(forward, 200, rpm);
+    wait(0.4, sec);
+    Drivetrain.stop(hold);
+    spinroller();
+    Drivetrain.drive(reverse, 100, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(coast);
+    pursuit2(true, -2, -70, 5, 60, 4);
+    thread l(launchCata);
+    wait(0.1, sec);
+    pursuit2(false, -12, -38, -135, 5, 3.3);
+    Intake.spin(forward);
+    pursuit2(false, -54, -78, 0, 7, 15);
+    Intake.stop(coast);
+    pursuit2(true, -54, -118, -90, 5, 4);
+    pursuit2(true, -48, -118, -94, 5, 5);
+    thread m(launchCata);
+    wait(0.2, sec);
+    Drivetrain.drive(forward, 80, rpm);
+    wait(0.4, sec);
+    Drivetrain.stop(coast);
+    Intake.spin(forward);
+    pursuit2(false, -76, -94, 69, 0.2, 5, true);
+    pursuit2(true, -48, -118, -94, 5, 5);
+    Intake.stop(coast);
+    thread n(launchCata);
+    wait(0.1, sec);
+    pursuit2(false, -94, -116, 180, 5, 5);
+    Drivetrain.drive(forward, 150, rpm);
+    wait(0.3, sec);
+    Drivetrain.stop(hold);
+    spinroller();
+    Drivetrain.drive(reverse, 100, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(coast);
+    Intake.spin(forward);
+    pursuit2(false, -88, -94, 69, 0.5, 5, true);
+    pursuit2(true, -48, -118, -94, 5, 5);
+    Intake.stop(coast);
+    thread p(launchCata);
+    wait(0.1, sec);
+
   }
 }
 

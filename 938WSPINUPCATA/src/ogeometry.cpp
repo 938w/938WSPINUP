@@ -4,7 +4,7 @@
 
 static double wheelcircumfrence = 3.25 * M_PI;
 
-position odom::odomoutputs() {
+position odome::odomoutputs() {
   static double tdistr = 0;
   static double tdistl = 0;
   static double theta = 0;
@@ -28,13 +28,13 @@ position odom::odomoutputs() {
 
   return p;
 }
-void odom::reset() {
+void odome::reset() {
   x = 0;
   y = 0;
   Leftside.resetPosition();
   Rightside.resetPosition();
 }
-void odom::setStarting(double ax, double ay) {
+void odome::setStarting(double ax, double ay) {
   x += ax;
   y += ay;
 }
