@@ -44,7 +44,8 @@ void pre_auton(void) {
 }
 // ----- Definition of Variables and Catapult Functions -----
 bool iscatagoingdown = false;
-int autonToRun = 4;
+int autonToRun = 4
+;
 int endgam() {
   timer c;
   while (true) {
@@ -116,7 +117,7 @@ void autonomous(void) {
     pursuit(-44, -52, -44, 1.7, 10, 3.6, false);
     vex::thread w(launchCata);
     wait(0.2, sec);
-    /*
+  
     printf("[shot1] current time: %f seconds.\n", t_auton.time(sec));
 
     drive.driveturn(-110, 0.7, 0.48);
@@ -145,7 +146,7 @@ void autonomous(void) {
     spinroller();
     Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
     printf("[roller2] current time: %f seconds.\n", t_auton.time(sec));
-    */
+    
     t_auton.clear();
   }
   if (autonToRun == 1 || autonToRun == 3) {
@@ -174,7 +175,7 @@ void autonomous(void) {
     //This is for endgame 
     //thread e(endgam);
     wait(0.1, sec);
-
+    drive.driveturn(185, 0.62, 0.26);
     odometry.setStarting(-25, 0);
     Drivetrain.drive(forward, 200, rpm);
     wait(0.2, sec);
@@ -184,7 +185,7 @@ void autonomous(void) {
     wait(0.2, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(false, -8, -14, 90, 8, 7);
+    pursuit2(false, -8, -14, 90, 10, 7);
     Intake.stop(coast);
     Drivetrain.drive(forward, 200, rpm);
     wait(0.4, sec);
@@ -193,28 +194,29 @@ void autonomous(void) {
     Drivetrain.drive(reverse, 100, rpm);
     wait(0.2, sec);
     Drivetrain.stop(coast);
-    pursuit2(true, -2, -70, 5, 60, 4);
+    pursuit2(true, -2, -70, 5, 5, 12);
     thread l(launchCata);
-    wait(0.1, sec);
-    pursuit2(false, -12, -38, -135, 5, 3.3);
+    wait(0.2, sec);
+    pursuit2(false, -12, -38, -135, 12, 4);
     Intake.spin(forward);
-    pursuit2(false, -54, -78, 0, 7, 15);
-    Intake.stop(coast);
-    pursuit2(true, -54, -118, -90, 5, 4);
-    pursuit2(true, -48, -118, -94, 5, 5);
+    pursuit2(false, -54, -78, 69, 12, 5);
+    pursuit2(true, -54, -113, 69, 5, 9);
+    pursuit2(true, -48, -116, -94, 5, 9);
     thread m(launchCata);
     wait(0.2, sec);
     Drivetrain.drive(forward, 80, rpm);
     wait(0.4, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(false, -76, -94, 69, 0.2, 5, true);
-    pursuit2(true, -48, -118, -94, 5, 5);
+    pursuit2(false, -73.5, -91, 69, 2, 6, true);
+    pursuit2(true, -48, -116, -94, 5, 12);
+    intakeoutake();
     Intake.stop(coast);
     thread n(launchCata);
     wait(0.1, sec);
-    pursuit2(false, -94, -116, 180, 5, 5);
-    Drivetrain.drive(forward, 150, rpm);
+    pursuit2(false, -95, -116, 180, 12, 5);
+    wait(0.1, sec);
+    Drivetrain.drive(forward, 120, rpm);
     wait(0.3, sec);
     Drivetrain.stop(hold);
     spinroller();
@@ -222,12 +224,47 @@ void autonomous(void) {
     wait(0.2, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(false, -88, -94, 69, 0.5, 5, true);
-    pursuit2(true, -48, -118, -94, 5, 5);
+    wait(0.1, sec);
+    pursuit2(false, -92, -90, 69, 3, 5, true);
+    intakeoutake();
+    pursuit2(true, -48, -118, -94, 5, 12);
     Intake.stop(coast);
     thread p(launchCata);
     wait(0.1, sec);
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, -116, -102,  -90, 10, 10);
+    wait(0.1, sec);
+    Drivetrain.drive(forward, 120, rpm);
+    wait(0.4, sec);
+    Intake.stop();
+    Drivetrain.stop(hold);
+    spinroller();
+    Drivetrain.drive(reverse, 100, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(coast);
+    /*
+    pursuit2(true, -113, -110,  -135, 3, 6);
+    wait(0.5, sec);
+    endgame.set(true);
+    */
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, -85, -63, 69, 12, 6);
+    pursuit2(true, -116, -54, 185, 6, 12);
+    Intake.stop(coast);
+    thread s(launchCata);
+    wait(0.2, sec);
+    Intake.spin(forward);
+    pursuit2(false, -50, -48, 69, 15, 5);
+    pursuit2(true, -72, -50, 135, 5, 12);
+    Intake.stop(coast);
+    thread q(launchCata);
+    wait(0.2, sec);
+    Intake.spin(forward);
+    pursuit2(false, -49, -23, 69, 10, 5, true);
+   
 
+  
+    
   }
 }
 
@@ -254,12 +291,13 @@ void usercontrol(void) {
   Rotation3.resetPosition();
   Drivetrain.setStopping(coast);
   if (autonToRun == 0 || autonToRun == 1) {
-    colour = red;
+    colour = vex::red;
   }
   if (autonToRun == 2 || autonToRun == 3) {
-    colour = blue;
+    colour = vex::blue;
   }
   while (1) {
+    
     // Rotation Sensor Display(should be zero when the cata is up)
     if (!iscatagoingdown) {
       if (Controller1.ButtonR2.pressing()) {

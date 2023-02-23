@@ -8,7 +8,7 @@ using code = vision::code;
 brain  Brain;
 
 // VEXcode device constructors
-optical Optical1 = optical(PORT20);
+optical Optical1 = optical(PORT18);
 motor Catapult = motor(PORT3, ratio36_1, true);
 motor Intake = motor(PORT2, ratio6_1, true);
 controller Controller1 = controller(primary);

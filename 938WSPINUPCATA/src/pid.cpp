@@ -127,12 +127,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       previoust = tAngle;
       wait(1, msec);
     }
-    if (stack) {Drivetrain.drive(forward, 100, rpm);
-    wait(0.2, sec);
-    Drivetrain.stop(hold);
-    wait(0.1, sec);
-    }
-    Drivetrain.stop(hold);
+      Drivetrain.stop(hold);
     angleError = 100;
     lasterror = 0;
     previous = 0;
@@ -169,6 +164,16 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         forwardVelocity -= change + slewDOWN;
       }
       previous = forwardVelocity;
+      if (forwardVelocity > 75) {
+        forwardVelocity = 75;
+      }
+      if (stack) {
+        if (abs(distanceError) < 16) {
+          if (forwardVelocity > 25) {
+          forwardVelocity = 25;
+          }
+        }
+      }
       if (abs(distanceError) > 2) {
         Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
         Rightside.spin(forward, forwardVelocity - turnVelocity, pct);
@@ -262,6 +267,9 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         forwardVelocity -= change + slewDOWN;
       }
       turnVelocity = 0;
+      if (forwardVelocity < -75) {
+        forwardVelocity = -75;
+      }
       if (abs(distanceError) > 2) {
         Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
         Rightside.spin(forward, forwardVelocity - turnVelocity, pct);
@@ -335,10 +343,10 @@ void pid::driveturn(double target, double p, double d) {
   double currentyaw;
   while (fabs(error) > 0.2) {
     currentyaw = Inertial.yaw();
-    if (target == 180) {
+    if (target > 180) {
       if (Inertial.yaw() < 0) {
         currentyaw = 180 + (180 + Inertial.yaw());
-        p = 0.8;
+        p = 0.7;
       }
     }
     error = target - currentyaw;
