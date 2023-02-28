@@ -10,7 +10,7 @@ int spinroller () {
     if (Controller1.ButtonX.pressing()){
       break;
     }
-    if(t1.time(sec) > 3) {
+    if(t1.time(sec) > 2) {
       break;
     }
   }

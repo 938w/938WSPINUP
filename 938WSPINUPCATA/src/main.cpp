@@ -214,31 +214,31 @@ void autonomous(void) {
     wait(0.2, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(false, -8, -14, 90, 10, 7);
+    pursuit2(false, -8, -14, 90, 10, 6);
     Intake.stop(coast);
     Drivetrain.drive(forward, 200, rpm);
-    wait(0.4, sec);
+    wait(0.35, sec);
     Drivetrain.stop(hold);
     spinroller();
     Drivetrain.drive(reverse, 100, rpm);
     wait(0.2, sec);
     Drivetrain.stop(coast);
+    Intake.spin(forward);
     pursuit2(true, -2, -70, 5, 7, 12);
     thread l(launchCata);
     wait(0.2, sec);
-    pursuit2(false, -12, -38, -135, 12, 4);
+    pursuit2(false, -12, -38, -135, 12, 3);
     Intake.spin(forward);
-    pursuit2(false, -54, -78, 69, 12, 5);
-    pursuit2(true, -54, -113, 69, 5, 9);
-    pursuit2(true, -48, -116, -94, 5, 9);
+    pursuit2(false, -54, -78, 69, 12, 3);
+    pursuit2(true, -48, -113, -94, 5, 12);
     thread m(launchCata);
     wait(0.2, sec);
     Drivetrain.drive(forward, 80, rpm);
     wait(0.4, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(false, -74, -90, 69, 2, 6, true);
-    pursuit2(true, -48, -116, -96, 5, 12);
+     pursuit2(false, -74, -90, 69, 2, 6, true);
+         pursuit2(true, -46, -114, -96, 3, 12);
     intakeoutake();
     Intake.stop(coast);
     thread n(launchCata);
@@ -254,9 +254,8 @@ void autonomous(void) {
     Drivetrain.stop(hold);
     Intake.spin(forward);
     wait(0.1, sec);
-    pursuit2(false, -92.5, -90, 69, 3, 5, true);
-    intakeoutake();
-    pursuit2(true, -48, -118, -94, 5, 12);
+    pursuit2(false, -92.5, -90, 69, 3, 3, true);
+    pursuit2(true, -48, -115, -94, 3, 12);
     Intake.stop(coast);
     thread p(launchCata);
     wait(0.1, sec);
@@ -264,7 +263,7 @@ void autonomous(void) {
     pursuit2(false, -116, -100,  -90, 10, 10);
     wait(0.1, sec);
     Drivetrain.drive(forward, 120, rpm);
-    wait(0.4, sec);
+    wait(0.35, sec);
     Intake.stop(hold);
     Drivetrain.stop(hold);
     wait(0.1, sec);
@@ -278,21 +277,24 @@ void autonomous(void) {
     endgame.set(true);
     */
     Intake.spin(forward, 600, rpm);
-    pursuit2(false, -88, -62, 69, 10, 6);
-    pursuit2(true, -112, -52, 185, 6, 10);
+    pursuit2(false, -88, -62, 69, 12, 3);
+    pursuit2(true, -112, -52, 185, 3, 12);
     Intake.stop(coast);
     thread s(launchCata);
     wait(0.2, sec);
     Intake.spin(forward);
     wait(0.1, sec);
-    pursuit2(false, -50, -50, 69, 15, 5);
-    pursuit2(true, -72, -48, 138, 5, 12);
+    pursuit2(false, -50, -49, 69, 15, 3);
+    pursuit2(true, -72, -49, 138, 3, 12);
     Intake.stop(coast);
     thread q(launchCata);
     wait(0.2, sec);
     Intake.spin(forward);
-    pursuit2(false, -8, -12, 45, 5, 5);
-  
+    pursuit2(false, -42, -21, 45, 2.5, 2, true);
+    pursuit2(true, -76, -6, 85, 3, 8);
+    thread k(launchCata);
+    wait(0.2, sec);
+    pursuit2(false, -8, -11, 45, 12, 3);
     
   }
 }

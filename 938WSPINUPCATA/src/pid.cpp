@@ -73,8 +73,8 @@ void pursuit(double targetX, double targetY, double targetA, double P,
 static double wheelcircumfrence = 3.25 * M_PI;
 void pursuit2(bool backwards, double targetX, double targetY, double endA,
               double slewUP, double slewDOWN, bool stack) {
-  static double p = 3.7;
-  static double ap = 0.63;
+  static double p = 3.6;
+  static double ap = 0.62;
   static double d = 1;
   static double ad = 0.26;
   if (!backwards) {
@@ -113,11 +113,11 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (change < -1) {
         turnVelocity -= change + 1;
       }
-      if (turnVelocity > 50) {
-        turnVelocity = 50;
+      if (turnVelocity > 70) {
+        turnVelocity = 70;
       }
-      if (turnVelocity < -50) {
-        turnVelocity = -50;
+      if (turnVelocity < -70) {
+        turnVelocity = -70;
       }
       if (currentAngle > tAngle) {
         base = -1;
@@ -236,11 +236,11 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (change < -5) {
         turnVelocity -= change + 5;
       }
-      if (turnVelocity > 50) {
-        turnVelocity = 50;
+      if (turnVelocity > 70) {
+        turnVelocity = 70;
       }
-      if (turnVelocity < -50) {
-        turnVelocity = -50;
+      if (turnVelocity < -70) {
+        turnVelocity = -70;
       }
       Rightside.spin(forward, -turnVelocity, pct);
       Leftside.spin(forward, turnVelocity, pct);
