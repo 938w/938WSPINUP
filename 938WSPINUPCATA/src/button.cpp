@@ -16,5 +16,6 @@ int spinroller () {
   }
   Intake.stop(hold);
   t1.clear();
+  vex::this_thread::sleep_for(50);
   return 0;
 }

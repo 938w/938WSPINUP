@@ -74,9 +74,9 @@ static double wheelcircumfrence = 3.25 * M_PI;
 void pursuit2(bool backwards, double targetX, double targetY, double endA,
               double slewUP, double slewDOWN, bool stack) {
   static double p = 3.7;
-  static double ap = 0.62;
+  static double ap = 0.63;
   static double d = 1;
-  static double ad = 0.62;
+  static double ad = 0.26;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -86,7 +86,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double previous = 0;
     double previoust = 0;
     double base = 0;
-    while (angleError > 0.2) {
+    while (abs(angleError) > 0.2) {
       xError = targetX - odom.x;
       yError = targetY - odom.y;
       tAngle = atan2(xError, yError) * (180 / M_PI);
@@ -95,8 +95,14 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (currentAngle > 360) {
         currentAngle = currentAngle - 360;
       }
+      if (currentAngle > 720) {
+        currentAngle = currentAngle - 720;
+      }
       if (currentAngle < -360) {
         currentAngle = currentAngle + 360;
+      }
+      if (currentAngle < -720) {
+        currentAngle = currentAngle + 720;
       }
       angleError = tAngle - currentAngle;
       double turnVelocity = angleError * ap + derivative * ad;
@@ -127,7 +133,8 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       previoust = tAngle;
       wait(1, msec);
     }
-      Drivetrain.stop(hold);
+    Drivetrain.stop(hold);
+    wait(0.1, sec);
     angleError = 100;
     lasterror = 0;
     previous = 0;
@@ -145,8 +152,14 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (currentAngle > 360) {
         currentAngle = currentAngle - 360;
       }
+      if (currentAngle > 720) {
+        currentAngle = currentAngle - 720;
+      }
       if (currentAngle < -360) {
         currentAngle = currentAngle + 360;
+      }
+      if (currentAngle < -720) {
+        currentAngle = currentAngle + 720;
       }
       angleError = tAngle - currentAngle;
       double turnVelocity = angleError * 0.3;
@@ -164,13 +177,13 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         forwardVelocity -= change + slewDOWN;
       }
       previous = forwardVelocity;
-      if (forwardVelocity > 75) {
-        forwardVelocity = 75;
+      if (forwardVelocity > 80) {
+        forwardVelocity = 80;
       }
       if (stack) {
         if (abs(distanceError) < 16) {
           if (forwardVelocity > 25) {
-          forwardVelocity = 25;
+            forwardVelocity = 25;
           }
         }
       }
@@ -205,8 +218,14 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (currentAngle > 360) {
         currentAngle = currentAngle - 360;
       }
+      if (currentAngle > 720) {
+        currentAngle = currentAngle - 720;
+      }
       if (currentAngle < -360) {
         currentAngle = currentAngle + 360;
+      }
+      if (currentAngle < -720) {
+        currentAngle = currentAngle + 720;
       }
       angleError = tAngle - currentAngle;
       double turnVelocity = angleError * ap + derivative * ad;
@@ -267,8 +286,8 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         forwardVelocity -= change + slewDOWN;
       }
       turnVelocity = 0;
-      if (forwardVelocity < -75) {
-        forwardVelocity = -75;
+      if (forwardVelocity < -85) {
+        forwardVelocity = -85;
       }
       if (abs(distanceError) > 2) {
         Leftside.spin(forward, forwardVelocity + turnVelocity, pct);
@@ -343,6 +362,12 @@ void pid::driveturn(double target, double p, double d) {
   double currentyaw;
   while (fabs(error) > 0.2) {
     currentyaw = Inertial.yaw();
+    if (target == 180) {
+      if (Inertial.yaw() < 0) {
+        currentyaw = 180 + (180 + Inertial.yaw());
+        p = 0.7;
+      }
+    }
     if (target > 180) {
       if (Inertial.yaw() < 0) {
         currentyaw = 180 + (180 + Inertial.yaw());
