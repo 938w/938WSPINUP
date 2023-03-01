@@ -76,7 +76,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
   static double p = 3.6;
   static double ap = 0.62;
   static double d = 1;
-  static double ad = 0.26;
+  static double ad = 0.3;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -144,6 +144,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
     double trdist = Rightside.position(deg);
     double crdist = 0;
     double cldist = 0;
+    Drivetrain.drive(forward, 5, rpm);
     while (distanceError > 0.2) {
       xError = targetX - odom.x;
       yError = targetY - odom.y;
