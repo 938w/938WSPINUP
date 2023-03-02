@@ -74,9 +74,9 @@ static double wheelcircumfrence = 3.25 * M_PI;
 void pursuit2(bool backwards, double targetX, double targetY, double endA,
               double slewUP, double slewDOWN, bool stack) {
   static double p = 3.6;
-  static double ap = 0.62;
+  static double ap = 0.63;
   static double d = 1;
-  static double ad = 0.3;
+  static double ad = 0.6;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -90,7 +90,6 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       xError = targetX - odom.x;
       yError = targetY - odom.y;
       tAngle = atan2(xError, yError) * (180 / M_PI);
-      double derivative = angleError - lasterror;
       double currentAngle = Inertial.rotation();
       if (currentAngle > 360) {
         currentAngle = currentAngle - 360;
@@ -105,13 +104,14 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         currentAngle = currentAngle + 720;
       }
       angleError = tAngle - currentAngle;
+      double derivative = angleError - lasterror;
       double turnVelocity = angleError * ap + derivative * ad;
       double change = turnVelocity - previous;
       if (change > 20) {
         turnVelocity -= change - 20;
       }
-      if (change < -1) {
-        turnVelocity -= change + 1;
+      if (change < -0.5) {
+        turnVelocity -= change + 0.5;
       }
       if (turnVelocity > 70) {
         turnVelocity = 70;
@@ -120,10 +120,10 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         turnVelocity = -70;
       }
       if (currentAngle > tAngle) {
-        base = -1;
+        base = -2;
       }
       if (currentAngle < tAngle) {
-        base = 1;
+        base = 2;
       }
       printf("%f\n", turnVelocity);
       Rightside.spin(reverse, base + turnVelocity, pct);
@@ -214,7 +214,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       xError = targetX - odom.x;
       yError = targetY - odom.y;
       tAngle = atan2(-xError, -yError) * (180 / M_PI);
-      double derivative = angleError - lasterror;
+      
       double currentAngle = Inertial.rotation();
       if (currentAngle > 360) {
         currentAngle = currentAngle - 360;
@@ -229,6 +229,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         currentAngle = currentAngle + 720;
       }
       angleError = tAngle - currentAngle;
+      double derivative = angleError - lasterror;
       double turnVelocity = angleError * ap + derivative * ad;
       double change = turnVelocity - previous;
       if (change > 20) {
