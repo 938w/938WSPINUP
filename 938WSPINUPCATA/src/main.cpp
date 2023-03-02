@@ -44,7 +44,7 @@ void pre_auton(void) {
 }
 // ----- Definition of Variables and Catapult Functions -----
 bool iscatagoingdown = false;
-int autonToRun = 0
+int autonToRun = 4
 ;
 int endgam() {
   timer c;
@@ -102,6 +102,7 @@ void autonomous(void) {
     // Spinning the roller to the right color
     //
     wait(0.1, sec);
+    
     odometry.setStarting(-25, 0);
     Drivetrain.drive(forward, 200, rpm);
     wait(0.15, sec);
@@ -205,6 +206,7 @@ void autonomous(void) {
     //This is for endgame 
     //thread e(endgam);
     wait(0.1, sec);
+    
     odometry.setStarting(-25, 0);
     Drivetrain.drive(forward, 200, rpm);
     wait(0.2, sec);
@@ -224,7 +226,7 @@ void autonomous(void) {
     wait(0.2, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-    pursuit2(true, -2, -70, 5, 7, 12);
+    pursuit2(true, -3, -70, 5, 7, 12);
     thread l(launchCata);
     wait(0.2, sec);
     pursuit2(false, -12, -38, -135, 12, 3);
@@ -237,14 +239,14 @@ void autonomous(void) {
     wait(0.4, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
-     pursuit2(false, -74, -90, 69, 2, 6, true);
-         pursuit2(true, -46, -114, -96, 3, 12);
+    pursuit2(false, -74, -90, 69, 2, 6, true);
+    pursuit2(true, -46, -113, -98, 4, 12);
     intakeoutake();
     Intake.stop(coast);
     thread n(launchCata);
     wait(0.1, sec);
-    pursuit2(false, -94, -115.5, 180, 12, 5);
-    wait(0.1, sec);
+    pursuit2(false, -94, -114, 180, 12, 4);
+    
     Drivetrain.drive(forward, 130, rpm);
     wait(0.3, sec);
     Drivetrain.stop(hold);
@@ -254,8 +256,9 @@ void autonomous(void) {
     Drivetrain.stop(hold);
     Intake.spin(forward);
     wait(0.1, sec);
+
     pursuit2(false, -92.5, -90, 69, 3, 3, true);
-    pursuit2(true, -48, -115, -94, 3, 12);
+    pursuit2(true, -48, -114, -94, 4, 12);
     Intake.stop(coast);
     thread p(launchCata);
     wait(0.1, sec);
@@ -278,20 +281,20 @@ void autonomous(void) {
     */
     Intake.spin(forward, 600, rpm);
     pursuit2(false, -88, -62, 69, 12, 3);
-    pursuit2(true, -112, -52, 185, 3, 12);
+    pursuit2(true, -112, -52, 185, 4, 12);
     Intake.stop(coast);
     thread s(launchCata);
     wait(0.2, sec);
     Intake.spin(forward);
     wait(0.1, sec);
     pursuit2(false, -50, -49, 69, 15, 3);
-    pursuit2(true, -72, -49, 138, 3, 12);
+    pursuit2(true, -72, -49, 138, 4, 12);
     Intake.stop(coast);
     thread q(launchCata);
     wait(0.2, sec);
     Intake.spin(forward);
     pursuit2(false, -42, -21, 45, 2.5, 2, true);
-    pursuit2(true, -76, -6, 85, 3, 8);
+    pursuit2(true, -76, -6, 85, 4, 8);
     thread k(launchCata);
     wait(0.2, sec);
     pursuit2(false, -8, -11, 45, 12, 3);
@@ -311,6 +314,8 @@ int cataThread() {
 }
 //_______________________________________________________________________________________________________________________________________
 // User Control
+int backward;
+int backward2;
 void usercontrol(void) {
   boost.set(true);
   vex::thread o(odomthread);
@@ -346,14 +351,24 @@ void usercontrol(void) {
     } else {
       endgame.set(false);
     }
+    if (Controller1.Axis2.position() < 0) {
+      backward = -1;
+    } else {
+      backward = 1;
+    }
+    if (Controller1.Axis3.position() < 0) {
+      backward2 = -1;
+    } else {
+      backward2 = 1;
+    }
     Controller1.ButtonR1.pressed(rollerthread);
     // Drive Code
-    RightM.spin(forward, Controller1.Axis2.position(), percent);
-    LeftM.spin(forward, Controller1.Axis3.position(), percent);
-    RightB.spin(forward, Controller1.Axis2.position(), percent);
-    LeftB.spin(forward, Controller1.Axis3.position(), percent);
-    RightF.spin(forward, Controller1.Axis2.position(), percent);
-    LeftF.spin(forward, Controller1.Axis3.position(), percent);
+    RightM.spin(forward, pow((Controller1.Axis2.position()/10), 2)*backward, percent);
+    LeftM.spin(forward, pow((Controller1.Axis3.position()/10), 2)*backward2, percent);
+    RightB.spin(forward, pow((Controller1.Axis2.position()/10), 2)*backward, percent);
+    LeftB.spin(forward, pow((Controller1.Axis3.position()/10), 2)*backward2, percent);
+    RightF.spin(forward, pow((Controller1.Axis2.position()/10), 2)*backward, percent);
+    LeftF.spin(forward, pow((Controller1.Axis3.position()/10), 2)*backward2, percent);
     vex::thread t(cataThread);
     wait(5, msec);
   }
