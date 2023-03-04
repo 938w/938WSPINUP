@@ -50,7 +50,7 @@ int endgam() {
   timer c;
   while (true) {
     vex::this_thread::sleep_for(500);
-    if (c.time(sec) > 40) {
+    if (c.time(sec) > 59) {
       endgame.set(true);
     }
   }
@@ -105,7 +105,7 @@ void autonomous(void) {
     
     odometry.setStarting(-25, 0);
     Drivetrain.drive(forward, 200, rpm);
-    wait(0.15, sec);
+    wait(0.2, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse);
     wait(0.2, sec);
@@ -114,7 +114,7 @@ void autonomous(void) {
     vex::thread w(launchCata);
     wait(0.1, sec);
     Intake.spin(forward);
-    pursuit2(false, -70, -35, -38, 3, 7);
+    pursuit2(false, -70, -35, -45, 3, 7);
     Drivetrain.drive(reverse, 120, rpm);
     wait(0.4, sec);
     Drivetrain.stop(brake);
@@ -205,15 +205,16 @@ void autonomous(void) {
     // Spinning the roller to the right color
     //This is for endgame 
     //thread e(endgam);
+   // thread e(endgam);
+   timer bruh;
     wait(0.1, sec);
-    
     odometry.setStarting(-25, 0);
-    Drivetrain.drive(forward, 200, rpm);
-    wait(0.2, sec);
+    Drivetrain.drive(forward, 150, rpm);
+    wait(0.1, sec);
     Drivetrain.stop(hold);
     spinroller();
     Drivetrain.drive(reverse, 100, rpm);
-    wait(0.2, sec);
+    wait(0.15, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward);
     pursuit2(false, -8, -14, 90, 10, 6);
@@ -232,7 +233,8 @@ void autonomous(void) {
     pursuit2(false, -12, -38, -135, 12, 3);
     Intake.spin(forward);
     pursuit2(false, -54, -78, 69, 12, 3);
-    pursuit2(true, -48, -113, -94, 5, 12);
+    pursuit2(true, -48, -112, -94, 5, 12);
+    l = null;
     thread m(launchCata);
     wait(0.2, sec);
     Drivetrain.drive(forward, 80, rpm);
@@ -245,10 +247,10 @@ void autonomous(void) {
     Intake.stop(coast);
     thread n(launchCata);
     wait(0.1, sec);
-    pursuit2(false, -94, -114, 180, 12, 4);
+    pursuit2(false, -94, -113, 180, 12, 4);
     
     Drivetrain.drive(forward, 130, rpm);
-    wait(0.3, sec);
+    wait(0.25, sec);
     Drivetrain.stop(hold);
     spinroller();
     Drivetrain.drive(reverse, 100, rpm);
@@ -263,7 +265,7 @@ void autonomous(void) {
     thread p(launchCata);
     wait(0.1, sec);
     Intake.spin(forward, 600, rpm);
-    pursuit2(false, -116, -100,  -90, 10, 10);
+    pursuit2(false, -116, -97,  -90, 10, 10);
     wait(0.1, sec);
     Drivetrain.drive(forward, 120, rpm);
     wait(0.35, sec);
@@ -293,12 +295,12 @@ void autonomous(void) {
     thread q(launchCata);
     wait(0.2, sec);
     Intake.spin(forward);
-    pursuit2(false, -42, -21, 45, 2.5, 2, true);
-    pursuit2(true, -76, -6, 85, 4, 8);
+    pursuit2(false, -40, -20, 45, 3, 2, true);
+    pursuit2(true, -74, -2, 85, 4, 8);
     thread k(launchCata);
     wait(0.2, sec);
     pursuit2(false, -8, -11, 45, 12, 3);
-    
+    endgame.set(true);
   }
 }
 
@@ -317,8 +319,8 @@ int cataThread() {
 int backward;
 int backward2;
 void usercontrol(void) {
+  
   boost.set(true);
-  vex::thread o(odomthread);
   // User control code here, inside the loop
   Intake.setVelocity(100, percent);
   Catapult.setVelocity(100, percent);

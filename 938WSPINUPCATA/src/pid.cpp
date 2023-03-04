@@ -56,7 +56,7 @@ void pursuit(double targetX, double targetY, double targetA, double P,
     if (fwVelocity < 2) {
       fwVelocity = 2;
     }
-    printf("%f, %f\n", tAngle, dError);
+   // printf("%f, %f\n", tAngle, dError);
     Rightside.spin(forward, fwVelocity - turnVelocity, pct);
     Leftside.spin(forward, fwVelocity + turnVelocity, pct);
     this_thread::sleep_for(2);
@@ -66,7 +66,7 @@ void pursuit(double targetX, double targetY, double targetA, double P,
     ang.driveturn(targetA, 0.58, 0.26);
   }
   Drivetrain.stop(hold);
-  printf("%f, %f\n", odom.x, odom.y);
+  //printf("%f, %f\n", odom.x, odom.y);
 }
 
 // ----- PURSUIT V2 -----
@@ -74,9 +74,9 @@ static double wheelcircumfrence = 3.25 * M_PI;
 void pursuit2(bool backwards, double targetX, double targetY, double endA,
               double slewUP, double slewDOWN, bool stack) {
   static double p = 3.6;
-  static double ap = 0.63;
+  static double ap = 0.64;
   static double d = 1;
-  static double ad = 0.6;
+  static double ad = 0.64;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -125,7 +125,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       if (currentAngle < tAngle) {
         base = 2;
       }
-      printf("%f\n", turnVelocity);
+      //("%f\n", turnVelocity);
       Rightside.spin(reverse, base + turnVelocity, pct);
       Leftside.spin(forward, base + turnVelocity, pct);
       lasterror = angleError;
