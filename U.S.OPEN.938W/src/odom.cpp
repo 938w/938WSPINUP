@@ -1,4 +1,4 @@
-#include "ogeometry.h"
+#include "odom.h"
 #include "vex.h"
 
 
@@ -8,15 +8,15 @@ position odome::odomoutputs() {
   static double tdistr = 0;
   static double tdistl = 0;
   static double theta = 0;
-  double dleft = Leftside.position(deg) * wheelcircumfrence * 0.6 / 360;
-  double dright = Rightside.position(deg) * wheelcircumfrence * 0.6 / 360;
+  double dleft = Leftside.position(deg) * wheelcircumfrence * 0.6666 / 360;
+  double dright = Rightside.position(deg) * wheelcircumfrence * 0.6666 / 360;
   dleft -= tdistl;
   dright -= tdistr;
   tdistl += dleft;
   tdistr += dright;
   double dist = (dright + dleft) / 2;
-  theta = Inertial.yaw() * (M_PI / 180);
-  //
+  theta = Inertial9.yaw() * (M_PI / 180);
+  printf("%f, %f\n", x, y);
   double addY = dist * cos(theta);
   double addX = dist * sin(theta);
   x += addX;
@@ -29,7 +29,7 @@ position odome::odomoutputs() {
   return p;
 }
 void odome::reset() {
-  x = 0;
+  x = -Distance21.objectDistance(inches);
   y = 0;
   Leftside.resetPosition();
   Rightside.resetPosition();
