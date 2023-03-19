@@ -11,7 +11,7 @@ brain  Brain;
 motor Catapult = motor(PORT1, ratio36_1, true);
 limit CataLimit = limit(Brain.ThreeWirePort.A);
 controller Controller1 = controller(primary);
-motor Intake = motor(PORT8, ratio6_1, false);
+motor Intake = motor(PORT18, ratio6_1, false);
 motor BR = motor(PORT2, ratio6_1, false);
 motor OR = motor(PORT3, ratio6_1, false);
 motor TR = motor(PORT4, ratio6_1, true);
@@ -24,8 +24,10 @@ digital_out Endgame = digital_out(Brain.ThreeWirePort.C);
 digital_out IntakeP = digital_out(Brain.ThreeWirePort.B);
 rotation Rotation19 = rotation(PORT19, false);
 rotation Rotation20 = rotation(PORT20, true);
+rotation Rotation11 = rotation(PORT11, false);
 inertial Inertial9 = inertial(PORT9);
 distance Distance21 = distance(PORT21);
+digital_out G = digital_out(Brain.ThreeWirePort.G);
 smartdrive Drivetrain = smartdrive(Leftside, Rightside, Inertial9, 300, 320, 130, distanceUnits::mm, 0.6);
 
 // VEXcode generated functions

@@ -8,8 +8,10 @@ position odome::odomoutputs() {
   static double tdistr = 0;
   static double tdistl = 0;
   static double theta = 0;
-  double dleft = Leftside.position(deg) * wheelcircumfrence * 0.6666 / 360;
-  double dright = Rightside.position(deg) * wheelcircumfrence * 0.6666 / 360;
+  //double dleft = Leftside.position(deg) * wheelcircumfrence * 0.6666 / 360;
+  //double dright = Rightside.position(deg) * wheelcircumfrence * 0.6666 / 360;
+  double dleft = Rotation20.position(deg) * wheelcircumfrence/ 360;
+  double dright = Rotation19.position(deg) * wheelcircumfrence/ 360;
   dleft -= tdistl;
   dright -= tdistr;
   tdistl += dleft;
@@ -33,8 +35,10 @@ void odome::reset() {
   y = 0;
   Leftside.resetPosition();
   Rightside.resetPosition();
+  Rotation19.resetPosition();
+  Rotation20.resetPosition();
 }
 void odome::setStarting(double ax, double ay) {
-  x += ax;
-  y += ay;
+  x = ax;
+  y = ay;
 }

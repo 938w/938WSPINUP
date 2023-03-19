@@ -22,6 +22,8 @@ extern distance Distance21;
 extern motor_group Leftside; 
 extern motor_group Rightside; 
 extern smartdrive Drivetrain;
+extern rotation Rotation11;
+extern digital_out G;
 
 /**
  * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
