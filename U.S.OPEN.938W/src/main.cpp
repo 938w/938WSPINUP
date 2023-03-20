@@ -171,7 +171,7 @@ void autonomous(void) {
     wait(0.1, sec);
     Drivetrain.stop(coast);
     Intake.spin(forward, 300, rpm);
-    pursuit2(true, -8, -75, 8, 7, 20, 80, 80);
+    pursuit2(true, -6, -75, 8, 7, 20, 80, 80);
     thread l(launchCata);
     pursuit2(false, -8, -60, 69, 20, 7, 80, 80);
     Intake.spin(forward, 600, rpm);
@@ -192,9 +192,9 @@ void autonomous(void) {
     Intake.spin(forward, 600, rpm);
     wait(0.1, sec);
     thread p(launchCata);
-    pursuit2(false, -112, -134, 180, 8, 8, 50, 50);
+    pursuit2(false, -108, -134, 180, 8, 8, 50, 50);
     Drivetrain.drive(forward, 400, rpm);
-    wait(0.4, sec);
+    wait(0.5, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse, 600, rpm);
     wait(0.5, sec);
