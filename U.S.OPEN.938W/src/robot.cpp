@@ -7,6 +7,7 @@ void setCata() {
   //printf("%f\n", Rotation11.position(deg));
   Catapult.setMaxTorque(1000, Nm);
   iscatagoingdown = true;
+  Intake.setVelocity(0, pct);
   while (Rotation11.position(deg) > -63 && !CataLimit.pressing()) {
      //printf("%f\n", Rotation11.position(deg));
     Catapult.spin(forward, 200, pct);
@@ -15,9 +16,11 @@ void setCata() {
     }
     this_thread::sleep_for(1);
   }
+    Intake.setVelocity(100, pct);
   Catapult.stop(hold);
   iscatagoingdown = false;
 }
+
 void launchCata() {
   Catapult.spinFor(forward, 80, deg, 200, rpm);
   this_thread::sleep_for(10);

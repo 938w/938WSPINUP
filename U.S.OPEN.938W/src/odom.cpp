@@ -18,7 +18,7 @@ position odome::odomoutputs() {
   tdistr += dright;
   double dist = (dright + dleft) / 2;
   theta = Inertial9.yaw() * (M_PI / 180);
-  printf("%f, %f\n", x, y);
+  //printf("%f, %f\n", x, y);
   double addY = dist * cos(theta);
   double addX = dist * sin(theta);
   x += addX;

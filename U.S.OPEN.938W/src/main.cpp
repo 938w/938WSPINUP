@@ -35,7 +35,7 @@ using namespace vex;
 
 // A global instance of competition
 competition Competition;
-int autontorun = 4;
+int autontorun = 1;
 // define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
@@ -83,125 +83,219 @@ void autonomous(void) {
     Intake.spin(reverse, 600, rpm);
     wait(0.25, sec);
     Intake.stop(hold);
-    Drivetrain.driveFor(reverse, 2, inches, 400, rpm);
-    pursuit2(true, -36.2, -15.5, -10.5, 7, 25, 90, 90);
+    Drivetrain.driveFor(reverse, 3, inches, 400, rpm);
+    wait(0.2, sec);
+    Intake.spin(forward, 600, rpm);
+    Leftside.spin(reverse, 600, rpm);
+    Rightside.spin(reverse, 180, rpm);
+    wait(0.3, sec);
+    thread g(launchCata);
+    wait(0.1, sec);
+    Drivetrain.stop(coast);
+    wait(0.05, sec);
+    Drivetrain.drive(forward, 400, rpm);
+    wait(0.175, sec);
+    pursuit2(false, -60, -44, -33, 15, 6, 90, 50);
+    wait(0.1, sec);
+    Intake.spin(forward, 100, rpm);
     Drivetrain.drive(reverse, 600, rpm);
+    wait(0.2, sec);
+    thread m(launchCata);
+    thread l(launchCata);
+    wait(0.1, sec);
+    Drivetrain.stop(coast);
+    wait(0.05, sec);
+    Drivetrain.drive(forward, 500, rpm);
+    wait(0.2, sec);
+    // leftside ends
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, -102, -88, 69, 20, 8, 90, 50);
+    drive.drivepid(-8, 2.7, 0.2, 0.4);
+    drive.driveturn(-57, 0.45, 0.1);
+    Drivetrain.drive(reverse, 600, rpm);
+    wait(0.15, sec);
+    m.detach();
+    thread n(launchCata);
+    wait(0.15, sec);
+    
+    Drivetrain.stop(coast);
+    Intake.stop(coast);
+    wait(0.15, sec);
+    Drivetrain.drive(forward);
+    wait(0.3, sec);
+    Drivetrain.stop();
+    pursuit2(false, -133, -120, -91, 15, 10, 80, 90);
+    Drivetrain.drive(forward, 400, rpm);
+    wait(0.3, sec);
+    Drivetrain.stop(hold);
+    wait(0.1, sec);
+    Intake.spin(reverse, 600, rpm);
+    wait(0.3, sec);
+    Intake.stop(hold);
+    Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
+  }
+  if (autontorun == 1) {
+    G.set(false);
+    odometry.setStarting(0, 0);
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, 0, 25, 69, 15, 7, 80, 50);
+    drive.driveturn(-160, 0.42, 0.4);
+    Drivetrain.drive(reverse, 600, rpm);
+    wait(0.15, sec);
+    thread n(launchCata);
+    wait(0.1, sec);
+    Drivetrain.stop(coast);
+    wait(0.05, sec);
+    Drivetrain.drive(forward);
+    wait(0.3, sec);
+    Drivetrain.stop(coast);
+    pursuit2(true, -24, 0, -8, 8, 20, 80, 80);
+    Intake.spin(forward, 600, rpm);
+    drive.drivepid(50, 2.8, 0.1, 0.1, 0, 25, 3000);
+    Intake.stop();
+    Drivetrain.driveFor(forward, 5, inches);
+    Intake.stop();
+    drive.driveturn(-137, 0.42, 0.4);
+    Drivetrain.drive(reverse, 600, rpm);
+    wait(0.3, sec);
+    thread q(launchCata);
+    wait(0.05, sec);
+    Drivetrain.stop(coast);
+    wait(0.1, sec);
+    Drivetrain.drive(forward);
+    wait(0.3, sec);
+    Drivetrain.stop(coast);
+    pursuit2(false, 18, 7, 180, 15, 7, 80, 90);
+     Drivetrain.drive(forward, 300, rpm);
+    wait(0.3, sec);
+    Drivetrain.stop(hold);
+    wait(0.1, sec);
+    Intake.spin(reverse, 600, rpm);
+    wait(0.3, sec);
+    Intake.stop(hold);
+    Drivetrain.driveFor(reverse, 3, inches, 300, rpm);
+  }
+  if (autontorun == 2) {
+    G.set(false);
+    Rightside.spin(forward, 150, rpm);
+    wait(0.2, sec);
+    Drivetrain.stop(hold);
+    Intake.spin(reverse, 600, rpm);
+    wait(0.25, sec);
+    Intake.stop(hold);
+    Drivetrain.driveFor(reverse, 2, inches, 400, rpm);
+    pursuit2(true, -36.2, -15.5, -13, 7, 25, 90, 90);
+    Drivetrain.drive(reverse, 600, rpm);
+    wait(0.05, sec);
     thread b(launchCata);
     wait(0.1, sec);
     Drivetrain.stop(hold);
-    wait(0.3, sec);
+    wait(0.2, sec);
     Drivetrain.drive(forward, 500, rpm);
     wait(0.1, sec);
     Intake.spin(forward, 600, rpm);
     pursuit2(false, -69, -42, -30, 15, 6, 75, 50);
     b.detach();
     wait(0.1, sec);
-    Drivetrain.drive(reverse, 550, rpm);
+    Drivetrain.drive(reverse, 600, rpm);
     wait(0.3, sec);
-    Drivetrain.stop(coast);
     thread m(launchCata);
+    wait(0.05, sec);
+    Drivetrain.stop(coast);
     Drivetrain.stop(coast);
     Drivetrain.drive(forward, 500, rpm);
     wait(0.2, sec);
     // leftside ends
     Intake.spin(forward, 600, rpm);
-    pursuit2(false, -112, -88, -62, 20, 8, 70, 40);
+    pursuit2(false, -110, -88, -59, 20, 8, 70, 40);
     Drivetrain.drive(reverse, 500, rpm);
     wait(0.1, sec);
     m.detach();
     thread n(launchCata);
-    wait(0.1, sec);
-    Drivetrain.stop(coast);
-    pursuit2(false, -146, -102, -90, 20, 8, 90, 80);
-    Intake.stop(coast);
-    Drivetrain.drive(forward, 600, rpm);
-    wait(0.2, sec);
-    Drivetrain.stop(hold);
-    Intake.spin(reverse, 600, rpm);
-    wait(0.2, sec);
-    Intake.stop(hold);
-  }
-  if (autontorun == 1) {
-    G.set(false);
-    odometry.setStarting(0, 0);
-    Intake.spin(forward, 600, rpm);
-    pursuit2(false, 0, 24, 69, 15, 7, 80, 50);
-    drive.driveturn(-152, 0.46, 0.4);
-    Drivetrain.drive(reverse, 500, rpm);
-    wait(0.2, sec);
-    thread n(launchCata);
     wait(0.05, sec);
-    Drivetrain.stop(brake);
-    wait(0.2, sec);
-    Drivetrain.drive(forward);
-    wait(0.3, sec);
     Drivetrain.stop(coast);
-    pursuit2(false, 24, 2, 180, 15, 7, 80, 50);
-    Drivetrain.drive(forward, 600, rpm);
-    wait(0.2, sec);
-    Drivetrain.stop(hold);
-    Intake.stop();
-    wait(0.1, sec);
-    Intake.spin(reverse, 600, rpm);
-    wait(0.2, sec);
-    Intake.stop(hold);
-  }
-  if (autontorun == 2) {
+    Intake.stop(coast);
+    wait(0.05, sec);
+    Drivetrain.driveFor(forward, 5, inches);
   }
   if (autontorun == 4) {
-    G.set(true);
     Rightside.spin(forward, 150, rpm);
     wait(0.2, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse, 600, rpm);
     wait(0.5, sec);
     Intake.stop(hold);
-    Drivetrain.driveFor(reverse, 3, inches, 400, rpm);
+    Drivetrain.driveFor(reverse, 5, inches, 300, rpm);
     Intake.spin(forward, 600, rpm);
-    pursuit2(false, -9, -12, 90, 20, 7, 80, 70);
+    pursuit2(false, -8, -14, 90, 20, 7, 90, 70);
     wait(0.1, sec);
     Intake.stop(coast);
-    Drivetrain.drive(forward, 400, rpm);
+    Drivetrain.drive(forward, 300, rpm);
     wait(0.3, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse, 600, rpm);
     wait(0.5, sec);
-    Intake.stop(hold);
-    Drivetrain.driveFor(reverse, 5, inches, 400, rpm);
-    wait(0.1, sec);
-    Drivetrain.stop(coast);
-    Intake.spin(forward, 300, rpm);
-    pursuit2(true, -6, -75, 8, 7, 20, 80, 80);
-    thread l(launchCata);
-    pursuit2(false, -8, -60, 69, 20, 7, 80, 80);
+    Intake.stop();
+    Drivetrain.driveFor(reverse, 5, inches, 300, rpm);
+    Intake.spin(forward, 200, rpm);
+    pursuit2(true, -78, -6, 85, 7, 20, 90, 90);
+    thread t(launchCata);
+    wait(0.2, sec);
+    pursuit2(false, -75, -4, 0, 7, 20, 90, 90);
+    Drivetrain.drive(forward, 80, rpm);
+    wait(0.6, sec);
+    Drivetrain.stop();
+    Intake.spin(reverse, 200, rpm);
+    wait(1.5, sec);
     Intake.spin(forward, 600, rpm);
-    pursuit2(false, -60, -95, -52, 20, 7, 80, 50);
-    Drivetrain.drive(reverse, 500, rpm);
-    wait(0.24, sec);
-    thread m(launchCata);
-    wait(0.05, sec);
+    Drivetrain.driveFor(reverse, 6, inches);
+    pursuit2(true, -78, -8, 90, 7, 20, 90, 90);
+    thread r(launchCata);
+    wait(0.2, sec);
+    pursuit2(false, -74, -4, 0, 7, 20, 90, 90);
+    Drivetrain.drive(forward, 80, rpm);
+    wait(0.6, sec);
+    Drivetrain.stop();
+    Intake.spin(reverse, 200, rpm);
+    wait(1.5, sec);
+    Intake.spin(forward, 600, rpm);
+    Drivetrain.driveFor(reverse, 6, inches);
+    pursuit2(true, -78, -8, 90, 8, 20, 80, 90);
+    thread p(launchCata);
+    wait(0.2, sec);
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, -58, -28, 69, 7, 20, 110, 35);
+    pursuit2(true, -82, -7, 90, 20, 7, 90, 90);
+    thread i(launchCata);
+    wait(0.2, sec);
+    drive.driveturn(-155, 0.4, 0.2);
+    Drivetrain.drive(forward, 150, rpm);
+    wait(0.3, sec);
     Drivetrain.stop(coast);
-    wait(0.4, sec);
-    Drivetrain.drive(forward, 500, rpm);
+    Intake.spin(forward, 600, rpm);
+    pursuit2(false, -93, -47, -220, 20, 7, 90, 25);
+    pursuit2(false, -92.5, -49, -220, 20, 7, 90, 25);
+    Drivetrain.drive(reverse, 300, rpm);
     wait(0.2, sec);
     Drivetrain.stop(coast);
-    wait(0.1, sec);
-    Intake.spin(forward, 600, rpm);
-    pursuit2(false, -108, -120, 69, 16, 7, 80, 50);
-    pursuit2(true, -65, -130, -96, 7, 16, 80, 60);
-    Intake.spin(forward, 600, rpm);
-    wait(0.1, sec);
-    thread p(launchCata);
-    pursuit2(false, -108, -134, 180, 8, 8, 50, 50);
-    Drivetrain.drive(forward, 400, rpm);
-    wait(0.5, sec);
+    thread n(launchCata);
+    wait(0.2, sec);
+    Drivetrain.driveFor(forward, 8, inches);
+    drive.driveturn(-69, 0.4, 0.2);
+    Drivetrain.drive(forward, 150, rpm);
+    wait(0.3, sec);
+    Drivetrain.stop(coast);
+    pursuit2(false, -135, -52, 182, 20, 7, 90, 25);
+    thread w(launchCata);
+    wait(0.2, sec);
+    pursuit2(false, -139, -97, 270, 20, 7, 90, 90, true);
+    Intake.stop();
+    Drivetrain.drive(forward, 150, rpm);
+    wait(0.35, sec);
     Drivetrain.stop(hold);
     Intake.spin(reverse, 600, rpm);
     wait(0.5, sec);
-    Intake.stop(hold);
-    Drivetrain.driveFor(reverse, 5, inches, 400, rpm);
-    pursuit2(false, -135, -134, -135, 8, 8, 60, 60);
-
+    Intake.stop();
   }
   // ..........................................................................
   // Insert autonomous user code here.
@@ -225,26 +319,34 @@ int catatask() {
 int rever = 1;
 int revel = 1;
 void usercontrol(void) {
+  Intake.setVelocity(100, pct);
   thread o(odomthread);
   odometry.reset();
-  G.set(true);
+  G.set(false);
   // User control code here, inside the loop
   IntakeP.set(false);
   Endgame.set(false);
   Drivetrain.stop(coast);
   while (1) {
     thread m(catatask);
-    if (Controller1.ButtonR2.pressing()) {
-      Intake.spin(reverse, 400, rpm);
-    } else if (Controller1.ButtonL2.pressing()) {
-      Intake.spin(forward, 100, pct);
-    } else {
+    if (!CataLimit.pressing()) {
       Intake.stop();
+    } else {
+      if (Controller1.ButtonR2.pressing()) {
+        Intake.spin(reverse, 400, rpm);
+      } else if (Controller1.ButtonL2.pressing()) {
+        Intake.spin(forward);
+      } else {
+        Intake.stop();
+      }
     }
     if (Controller1.ButtonB.pressing() && Controller1.ButtonLeft.pressing()) {
       Endgame.set(true);
     } else {
       Endgame.set(false);
+    }
+    if (Controller1.ButtonUp.pressing()) {
+      G.set(true);
     }
     // This is the main execution loop for the user control program.
     // Each time through the loop your program should update motor + servo
