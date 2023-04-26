@@ -19,7 +19,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
   static double p = 3.2;
   static double ap = 0.45;
   static double d = 0.02;
-  static double ad = 0.1;
+  static double ad = 0.27;
   if (!backwards) {
     double xError = targetX - odom.x;
     double yError = targetY - odom.y;
@@ -126,7 +126,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
         tAngle = tAngle - 360;
       }
       angleError = tAngle - currentAngle;
-      double turnVelocity = angleError * 0.3;
+      double turnVelocity = angleError * 0.4;
       crdist = Rightside.position(deg) - trdist;
       cldist = Leftside.position(deg) - tldist;
       // distanceError = sqrt((pow(xError, 2) + pow(yError, 2)));
@@ -270,7 +270,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
       }
 
       angleError = tAngle - currentAngle;
-      double turnVelocity = angleError * 0.3;
+      double turnVelocity = angleError * 0.4;
       crdist = Rightside.position(deg) - trdist;
       cldist = Leftside.position(deg) - tldist;
       distanceError = -travel - (((crdist + cldist) / 2) * wheelcircumfrence *
@@ -302,7 +302,7 @@ void pursuit2(bool backwards, double targetX, double targetY, double endA,
   Drivetrain.stop(hold);
   if (endA != 69) {
     pid g;
-    g.driveturn(endA, 0.44, 0.12);
+    g.driveturn(endA, 0.5, 0.15);
   }
 }
 
